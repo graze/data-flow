@@ -1,0 +1,43 @@
+{
+    "name": "graze/data-flow",
+    "description": "Facilitate the movement of data between systems",
+    "keywords": [
+        "graze",
+        "data-flow"
+    ],
+    "homepage": "https://github.com/graze/data-flow",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Harry Bragg",
+            "email": "harry.bragg@graze.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Graze Developers",
+            "email": "developers@graze.com",
+            "homepage": "http://www.graze.com",
+            "role": "Development Team"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "league/container": "^1.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "mockery/mockery": "~0.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Graze\\DataFlow\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Graze\\DataFlow\\Test\\": "tests/src",
+            "Graze\\DataFlow\\Test\\Unit\\": "tests/unit",
+            "Graze\\DataFlow\\Test\\Functional\\": "tests/functional"
+        }
+    }
+}
