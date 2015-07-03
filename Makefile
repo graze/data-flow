@@ -4,19 +4,19 @@ test:
 	@./vendor/bin/phpunit
 
 test-coverage:
-	@./vendor/bin/phpunit --coverage-text --coverage-xml ./tests/report
+	@./vendor/bin/phpunit --coverage-text --coverage-html ./tests/report
 
 test-unit:
 	@./vendor/bin/phpunit --testsuite unit
 
 test-unit-coverage:
-	@./vendor/bin/phpunit --testsuite unit --coverage-text --coverage-xml ./tests/report
+	@./vendor/bin/phpunit --testsuite unit --coverage-text --coverage-html ./tests/report
 
 test-functional:
 	@./vendor/bin/phpunit --testsuite functional
 
 test-functional-coverage:
-	@./vendor/bin/phpunit --testsuite functional --coverage-text --coverage-xml ./tests/report
+	@./vendor/bin/phpunit --testsuite functional --coverage-text --coverage-html ./tests/report
 
 install:
 	@composer install

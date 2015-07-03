@@ -37,7 +37,7 @@ $redshiftTable
 ### Moving files around
 ```php
 $localFile
-    ->compress(Compression::GZIP)
+    ->compress(CompressionType::GZIP)
     ->transfer($s3File)
 ```
 
