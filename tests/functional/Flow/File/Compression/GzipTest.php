@@ -34,24 +34,24 @@ class GzipTest extends FileTestCase
         $file = new LocalFile(static::$dir . 'uncompressed_file_gz.test');
         file_put_contents($file->getFilePath(), 'random stuff and things!');
 
-        static::assertTrue($this->gzip->canFlow($file, 'gzip'));
-        static::assertFalse($this->gzip->canflow($file, 'gunzip'));
+        static::assertTrue($this->gzip->canExtend($file, 'gzip'));
+        static::assertFalse($this->gzip->canExtend($file, 'gunzip'));
     }
 
     public function testCanFlowOnlyAcceptsFilesThatAreCompressedForGunzip()
     {
-        $file = new LocalFile(static::$dir . 'compressed_file_gz.gz', CompressionType::GZIP);
+        $file = new LocalFile(static::$dir . 'compressed_file_gz.gz', ['compression' => CompressionType::GZIP]);
         file_put_contents($file->getFilePath(), 'random stuff and things!');
 
-        static::assertTrue($this->gzip->canFlow($file, 'gunzip'));
-        static::assertFalse($this->gzip->canFlow($file, 'gzip'));
+        static::assertTrue($this->gzip->canExtend($file, 'gunzip'));
+        static::assertFalse($this->gzip->canExtend($file, 'gzip'));
     }
 
     public function testCanFlowOnlyAcceptsLocalFiles()
     {
         $file = m::mock('Graze\DataFlow\Node\DataNode');
-        static::assertFalse($this->gzip->canFlow($file, 'gzip'));
-        static::assertFalse($this->gzip->canFlow($file, 'gunzip'));
+        static::assertFalse($this->gzip->canExtend($file, 'gzip'));
+        static::assertFalse($this->gzip->canExtend($file, 'gunzip'));
     }
 
     public function testFileGetsCompressedAsGzip()
@@ -150,7 +150,7 @@ class GzipTest extends FileTestCase
         $this->gzip->gunzip($file);
     }
 
-    public function testWhenTheProcessFailsAnExceptionIsthrownOnGzip()
+    public function testWhenTheProcessFailsAnExceptionIsThrownOnGzip()
     {
         $process = m::mock('overload:Symfony\Component\Process\Process');
         $process->shouldReceive('run')->once();
@@ -171,7 +171,7 @@ class GzipTest extends FileTestCase
         $this->gzip->gzip($file);
     }
 
-    public function testWhenTheProcessFailsAnExceptionIsthrownOnGunzip()
+    public function testWhenTheProcessFailsAnExceptionIsThrownOnGunzip()
     {
         $process = m::mock('overload:Symfony\Component\Process\Process');
         $process->shouldReceive('run')->once();

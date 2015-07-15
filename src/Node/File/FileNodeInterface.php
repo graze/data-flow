@@ -29,6 +29,11 @@ interface FileNodeInterface
     /**
      * @return string
      */
+    public function getEncoding();
+
+    /**
+     * @return string
+     */
     public function __toString();
 
     /**

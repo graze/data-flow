@@ -19,32 +19,28 @@ class CsvDefinitionTest extends TestCase
         $definition = new CsvDefinition();
 
         static::assertEquals(',', $definition->getDelimiter(), "Default Delimiter should be ','");
+        static::assertEquals('"', $definition->getQuoteCharacter(), "Default quote character should be \"");
         static::assertTrue($definition->useQuotes(), "Quoting should be on by default");
         static::assertEquals('\\N', $definition->getNullOutput(), "Null character should be '\\N'");
         static::assertTrue($definition->getIncludeHeaders(), "Headers should be on by default");
         static::assertEquals("\n", $definition->getLineTerminator(), "Line terminator should be '\\n'");
-        static::assertTrue($definition->isUnicode(), "Should be using unicode by default");
-        static::assertEquals('"', $definition->getQuoteCharacter(), "Default quote character should be \"");
     }
 
     public function testAssigningOptionsModifiesTheDefinition()
     {
         $definition = new CsvDefinition([
             'delimiter'      => "\t",
-            'useQuotes'      => false,
+            'quoteCharacter' => '',
             'nullOutput'     => '',
             'includeHeaders' => false,
-            'lineTerminator' => "----",
-            "isUnicode"      => false,
+            'lineTerminator' => "----"
         ]);
 
         static::assertEquals("\t", $definition->getDelimiter(), "Delimiter should be set to '\\t' (tab)");
+        static::assertEquals('', $definition->getQuoteCharacter(), "Quote character should be blank");
         static::assertFalse($definition->useQuotes(), "Quoting should be off");
         static::assertEquals('', $definition->getNullOutput(), "Null character should be '' (blank)'");
         static::assertFalse($definition->getIncludeHeaders(), "Headers should be off");
         static::assertEquals("----", $definition->getLineTerminator(), "Line terminator should be '----'");
-        static::assertFalse($definition->isUnicode(), "Unicode should be off");
-        static::assertEquals('', $definition->getQuoteCharacter(),
-            "Default quote character should be blank when useQuotes is false");
     }
 }

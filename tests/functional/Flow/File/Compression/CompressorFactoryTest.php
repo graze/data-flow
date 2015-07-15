@@ -22,11 +22,11 @@ class CompressorFactoryTest extends FileTestCase
 
     public function testCanFlowOnlyAcceptsFileNodeInterfaceClass()
     {
-        $node = m::mock('Graze\DataFlow\Node\File\FileNodeInterface','Graze\DataFlow\Flowable\FlowableInterface');
-        $generic = m::mock('Graze\DataFlow\Flowable\FlowableInterface');
+        $node = m::mock('Graze\DataFlow\Node\File\FileNodeInterface','Graze\Extensible\ExtensibleInterface');
+        $generic = m::mock('Graze\Extensible\ExtensibleInterface');
 
-        static::assertTrue($this->factory->canFlow($node, 'compress'));
-        static::assertFalse($this->factory->canFlow($generic, 'compress'));
+        static::assertTrue($this->factory->canExtend($node, 'compress'));
+        static::assertFalse($this->factory->canExtend($generic, 'compress'));
     }
 
     public function testCanCompressGzipFile()

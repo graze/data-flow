@@ -2,9 +2,9 @@
 
 namespace Graze\DataFlow\Flow\File;
 
-use Graze\DataFlow\Flow\FlowInterface;
-use Graze\DataFlow\Flowable\FlowableInterface;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\Extensible\ExtensibleInterface;
+use Graze\Extensible\ExtensionInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -21,31 +21,32 @@ use Symfony\Component\Process\Process;
  *
  * @package Graze\DataFlow\Flow\File
  */
-class ConvertEncoding implements FlowInterface
+class ConvertEncoding implements ExtensionInterface
 {
     /**
      * Determine if this object can act upon the supplied node
      *
-     * @param FlowableInterface $node
-     * @param string            $method
+     * @param ExtensibleInterface $node
+     * @param string              $method
      * @return bool
      */
-    public function canFlow(FlowableInterface $node, $method)
+    public function canExtend(ExtensibleInterface $node, $method)
     {
         return (($node instanceof LocalFile) &&
-            ($method == 'changeEncoding') &&
+            ($method == 'toEncoding') &&
             ($node->exists()));
     }
 
     /**
-     * @param LocalFile   $file
-     * @param string      $toEncoding         Encoding as defined by iconv
-     * @param string|null $fromEncoding       (Optional) Encoding as defined by iconv
-     * @param array       $options            -postfix <string> (Default: toEncoding)
+     * @extend Graze\DataFlow\Node\File\LocalFile Only apply to local files
+     *
+     * @param LocalFile $file
+     * @param string    $toEncoding           Encoding as defined by iconv
+     * @param array     $options              -postfix <string> (Default: toEncoding)
      *                                        -keepOldFile <bool> (Default: true)
      * @return LocalFile
      */
-    public function changeEncoding(LocalFile $file, $toEncoding, $fromEncoding = null, array $options = [])
+    public function toEncoding(LocalFile $file, $toEncoding, array $options = [])
     {
         $pathInfo = pathinfo($file->getFilePath());
 
@@ -59,7 +60,7 @@ class ConvertEncoding implements FlowInterface
         $output = new LocalFile($pathInfo['dirname'] . '/' . $outputFileName);
 
         $cmd = "iconv " .
-            ($fromEncoding ? "--from-code={$fromEncoding} " : '') .
+            ($file->getEncoding() ? "--from-code={$file->getEncoding()} " : '') .
             "--to-code={$toEncoding} " .
             "{$file->getFilePath()} " .
             "> {$output->getFilePath()}";

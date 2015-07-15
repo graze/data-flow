@@ -30,7 +30,6 @@ class CsvDefinitionPassThroughTest extends TestCase
         static::assertEquals('\\N', $file->getNullOutput(), "Null character should be '\\N'");
         static::assertTrue($file->getIncludeHeaders(), "Headers should be on by default");
         static::assertEquals("\n", $file->getLineTerminator(), "Line terminator should be '\\n'");
-        static::assertTrue($file->isUnicode(), "Should be using unicode by default");
         static::assertEquals('"', $file->getQuoteCharacter(), "Default quote character should be \"");
     }
 
@@ -40,11 +39,10 @@ class CsvDefinitionPassThroughTest extends TestCase
             'fake/path',
             new CsvDefinition([
                 'delimiter'      => "\t",
-                'useQuotes'      => false,
+                'quoteCharacter' => '',
                 'nullOutput'     => '',
                 'includeHeaders' => false,
                 'lineTerminator' => "----",
-                "isUnicode"      => false,
             ])
         );
 
@@ -53,7 +51,6 @@ class CsvDefinitionPassThroughTest extends TestCase
         static::assertEquals('', $file->getNullOutput(), "Null character should be '' (blank)'");
         static::assertFalse($file->getIncludeHeaders(), "Headers should be off");
         static::assertEquals("----", $file->getLineTerminator(), "Line terminator should be '----'");
-        static::assertFalse($file->isUnicode(), "Unicode should be off");
         static::assertEquals('', $file->getQuoteCharacter(),
             "Default quote character should be blank when useQuotes is false");
     }

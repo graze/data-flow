@@ -5,7 +5,6 @@ namespace Graze\DataFlow\Definition;
 class CsvDefinition implements CsvDefinitionInterface
 {
     const DEFAULT_DELIMITER       = ',';
-    const DEFAULT_USE_QUOTES      = true;
     const DEFAULT_NULL_OUTPUT     = '\\N';
     const DEFAULT_INCLUDE_HEADERS = true;
     const DEFAULT_LINE_TERMINATOR = "\n";
@@ -13,11 +12,11 @@ class CsvDefinition implements CsvDefinitionInterface
     const DEFAULT_QUOTE_CHARACTER = '"';
 
     const OPTION_DELIMITER       = 'delimiter';
-    const OPTION_USE_QUOTES      = 'useQuotes';
     const OPTION_NULL_OUTPUT     = 'nullOutput';
     const OPTION_INCLUDE_HEADERS = 'includeHeaders';
     const OPTION_LINE_TERMINATOR = 'lineTerminator';
     const OPTION_IS_UNICODE      = 'isUnicode';
+    const OPTION_QUOTE_CHARACTER = 'quoteCharacter';
 
     /**
      * @var array
@@ -28,6 +27,11 @@ class CsvDefinition implements CsvDefinitionInterface
      * @var string
      */
     protected $delimiter;
+
+    /**
+     * @var string
+     */
+    protected $quoteCharacter;
 
     /**
      * @var string
@@ -45,27 +49,20 @@ class CsvDefinition implements CsvDefinitionInterface
     protected $lineTerminator;
 
     /**
-     * @var bool
-     */
-    protected $unicode;
-
-    /**
      * @param array $options -delimiter <string> (Default: ,) Character to use between fields
-     *                       -useQuotes <bool> (Default: true) Quote each field
+     *                       -quoteCharacter <string> (Default: ")
      *                       -nullOutput <string> (Default: \N)
      *                       -includeHeaders <bool> (Default: true)
      *                       -lineTerminator <string> (Default: \n) [Not current implemented]
-     *                       -unicode <bool> (Default: true)
      */
     public function __construct($options = [])
     {
         $this->options = $options;
         $this->delimiter = $this->getOption(static::OPTION_DELIMITER, static::DEFAULT_DELIMITER);
-        $this->quotes = $this->getOption(static::OPTION_USE_QUOTES, static::DEFAULT_USE_QUOTES);
+        $this->quoteCharacter = $this->getOption(static::OPTION_QUOTE_CHARACTER, static::DEFAULT_QUOTE_CHARACTER);
         $this->nullOutput = $this->getOption(static::OPTION_NULL_OUTPUT, static::DEFAULT_NULL_OUTPUT);
         $this->includeHeaders = $this->getOption(static::OPTION_INCLUDE_HEADERS, static::DEFAULT_INCLUDE_HEADERS);
         $this->lineTerminator = $this->getOption(static::OPTION_LINE_TERMINATOR, static::DEFAULT_LINE_TERMINATOR);
-        $this->unicode = $this->getOption(static::OPTION_IS_UNICODE, static::DEFAULT_IS_UNICODE);
     }
 
     /**
@@ -91,7 +88,7 @@ class CsvDefinition implements CsvDefinitionInterface
      */
     public function useQuotes()
     {
-        return $this->quotes;
+        return $this->quoteCharacter <> '';
     }
 
     /**
@@ -119,18 +116,10 @@ class CsvDefinition implements CsvDefinitionInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isUnicode()
-    {
-        return $this->unicode;
-    }
-
-    /**
      * @return string
      */
     public function getQuoteCharacter()
     {
-        return ($this->quotes) ? static::DEFAULT_QUOTE_CHARACTER : '';
+        return $this->quoteCharacter;
     }
 }

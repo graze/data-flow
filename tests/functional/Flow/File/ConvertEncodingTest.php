@@ -19,30 +19,30 @@ class ConvertEncodingTest extends FileTestCase
         $this->converter = new ConvertEncoding();
     }
 
-    public function testCanFlowAcceptsLocalFile()
+    public function testCanExtendAcceptsLocalFile()
     {
         $localFile = m::mock('Graze\DataFlow\Node\File\LocalFile');
         $localFile->shouldReceive('exists')->andReturn(true, false);
 
-        static::assertTrue($this->converter->canFlow($localFile, 'changeEncoding'));
+        static::assertTrue($this->converter->canExtend($localFile, 'toEncoding'));
         static::assertFalse(
-            $this->converter->canFlow($localFile, 'changeEncoding'),
+            $this->converter->canExtend($localFile, 'toEncoding'),
             "CanFlow should return false if the file does not exist"
         );
 
         $randomThing = m::mock('Graze\DataFlow\Node\File\FileNodeInterface',
-            'Graze\DataFlow\Flowable\FlowableInterface');
+            'Graze\Extensible\ExtensibleInterface');
 
-        static::assertFalse($this->converter->canFlow($randomThing, 'changeEncoding'));
+        static::assertFalse($this->converter->canExtend($randomThing, 'toEncoding'));
     }
 
-    public function testCanFlowOnlyAcceptsTheChangeEncodingMethod()
+    public function testCanExtendOnlyAcceptsTheChangeEncodingMethod()
     {
         $localFile = m::mock('Graze\DataFlow\Node\File\LocalFile');
         $localFile->shouldReceive('exists')->andReturn(true);
 
-        static::assertTrue($this->converter->canFlow($localFile, 'changeEncoding'));
-        static::assertFalse($this->converter->canFlow($localFile, 'somethingelse'));
+        static::assertTrue($this->converter->canExtend($localFile, 'toEncoding'));
+        static::assertFalse($this->converter->canExtend($localFile, 'somethingelse'));
     }
 
     public function testChangeEncodingCanConvertBetweenASCIIAndUtf8()
@@ -53,7 +53,7 @@ class ConvertEncodingTest extends FileTestCase
         $isAscii = exec("file {$asciiFile->getFilePath()} | grep -i " . escapeshellarg('\bascii\b') . " | wc -l");
         static::assertEquals(1, $isAscii, "Original file to convert is not ascii");
 
-        $newFile = $this->converter->changeEncoding($asciiFile, 'UTF-8');
+        $newFile = $this->converter->toEncoding($asciiFile, 'UTF-8');
 
         $isUTF8 = exec("file {$newFile->getFilePath()} | grep -i " . escapeshellarg('\UTF-8\b') . " | wc -l");
         static::assertEquals(1, $isUTF8, "Converted file should be UTF8");
@@ -67,7 +67,7 @@ class ConvertEncodingTest extends FileTestCase
         $isUtf8 = exec("file {$utf8file->getFilePath()} | grep -i " . escapeshellarg('\butf-8\b') . " | wc -l");
         static::assertEquals(1, $isUtf8, "Original file to convert is not utf-8");
 
-        $newFile = $this->converter->changeEncoding($utf8file, 'UTF-16');
+        $newFile = $this->converter->toEncoding($utf8file, 'UTF-16');
 
         $isUTF16 = exec("file {$newFile->getFilePath()} | grep -i " . escapeshellarg('\UTF-16\b') . " | wc -l");
         static::assertEquals(1, $isUTF16, "Converted file should be UTF16");
@@ -78,7 +78,7 @@ class ConvertEncodingTest extends FileTestCase
         $asciiFile = new LocalFile(static::$dir . 'ascii_posfix.test');
         file_put_contents($asciiFile->getFilePath(), mb_convert_encoding('Some random Text', 'ASCII'));
 
-        $newFile = $this->converter->changeEncoding($asciiFile, 'UTF-8', null, ['postfix' => 'test']);
+        $newFile = $this->converter->toEncoding($asciiFile, 'UTF-8', ['postfix' => 'test']);
 
         static::assertEquals('ascii_posfix-test.test', $newFile->getFilename(),
             "Resulting file should have the postfix 'test'");
@@ -89,7 +89,7 @@ class ConvertEncodingTest extends FileTestCase
         $asciiFile = new LocalFile(static::$dir . 'ascii_keep.test');
         file_put_contents($asciiFile->getFilePath(), mb_convert_encoding('Some random Text', 'ASCII'));
 
-        $newFile = $this->converter->changeEncoding($asciiFile, 'UTF-8', null, ['keepOldFile' => true]);
+        $newFile = $this->converter->toEncoding($asciiFile, 'UTF-8', ['keepOldFile' => true]);
 
         static::assertTrue($asciiFile->exists(), "The original file should exist");
     }
@@ -99,12 +99,12 @@ class ConvertEncodingTest extends FileTestCase
         $asciiFile = new LocalFile(static::$dir . 'ascii_delete.test');
         file_put_contents($asciiFile->getFilePath(), mb_convert_encoding('Some random Text', 'ASCII'));
 
-        $newFile = $this->converter->changeEncoding($asciiFile, 'UTF-8', null, ['keepOldFile' => false]);
+        $newFile = $this->converter->toEncoding($asciiFile, 'UTF-8', ['keepOldFile' => false]);
 
         static::assertFalse($asciiFile->exists(), "The original file should be deleted");
     }
 
-    public function testConvertionWillFailWhenSpecifyingAnInvalidEncoding()
+    public function testConversionWillFailWhenSpecifyingAnInvalidEncoding()
     {
         $asciiFile = new LocalFile(static::$dir . 'ascii_fail.test');
         file_put_contents($asciiFile->getFilePath(), mb_convert_encoding('Some random Text', 'ASCII'));
@@ -113,6 +113,6 @@ class ConvertEncodingTest extends FileTestCase
             'Symfony\Component\Process\Exception\ProcessFailedException'
         );
 
-        $newFile = $this->converter->changeEncoding($asciiFile, 'NotARealEncoding');
+        $newFile = $this->converter->toEncoding($asciiFile, 'NotARealEncoding');
     }
 }

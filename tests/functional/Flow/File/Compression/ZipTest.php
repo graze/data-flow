@@ -34,24 +34,24 @@ class ZipTest extends FileTestCase
         $file = new LocalFile(static::$dir . 'uncompressed_file_zip.test');
         file_put_contents($file->getFilePath(), 'random stuff and things!');
 
-        static::assertTrue($this->zip->canFlow($file, 'zip'));
-        static::assertFalse($this->zip->canflow($file, 'unzip'));
+        static::assertTrue($this->zip->canExtend($file, 'zip'));
+        static::assertFalse($this->zip->canExtend($file, 'unzip'));
     }
 
     public function testCanFlowOnlyAcceptsFilesThatAreCompressedForUnzip()
     {
-        $file = new LocalFile(static::$dir . 'compressed_file_zip.zip', CompressionType::ZIP);
+        $file = new LocalFile(static::$dir . 'compressed_file_zip.zip', ['compression' => CompressionType::ZIP]);
         file_put_contents($file->getFilePath(), 'random stuff and things!');
 
-        static::assertTrue($this->zip->canFlow($file, 'unzip'));
-        static::assertFalse($this->zip->canFlow($file, 'zip'));
+        static::assertTrue($this->zip->canExtend($file, 'unzip'));
+        static::assertFalse($this->zip->canExtend($file, 'zip'));
     }
 
     public function testCanFlowOnlyAcceptsLocalFiles()
     {
         $file = m::mock('Graze\DataFlow\Node\DataNode');
-        static::assertFalse($this->zip->canFlow($file, 'zip'));
-        static::assertFalse($this->zip->canFlow($file, 'unzip'));
+        static::assertFalse($this->zip->canExtend($file, 'zip'));
+        static::assertFalse($this->zip->canExtend($file, 'unzip'));
     }
 
     public function testFileGetsCompressedAsZip()

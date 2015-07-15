@@ -7,10 +7,10 @@ use Graze\DataFlow\Test\TestCase;
 
 class DataNodeTest extends TestCase
 {
-    public function testIsFlowable()
+    public function testIsExtensible()
     {
         $node = new DataNode();
-        static::assertInstanceOf('Graze\DataFlow\Flowable\Flowable', $node);
+        static::assertInstanceOf('Graze\Extensible\ExtensibleInterface', $node);
     }
 
     public function testImplementsDataNodeInterface()

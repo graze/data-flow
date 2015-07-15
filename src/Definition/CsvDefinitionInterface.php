@@ -33,9 +33,4 @@ interface CsvDefinitionInterface
      * @return string
      */
     public function getLineTerminator();
-
-    /**
-     * @return bool
-     */
-    public function isUnicode();
 }

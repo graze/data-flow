@@ -12,7 +12,7 @@ class LocalFileTest extends FileTestCase
     {
         $file = new LocalFile('/broken/path/to/nowhere');
         static::assertInstanceOf('Graze\DataFlow\Node\File\FileNodeInterface', $file);
-        static::assertInstanceOf('Graze\DataFlow\Flowable\Flowable', $file);
+        static::assertInstanceOf('Graze\Extensible\ExtensibleInterface', $file);
     }
 
     public function testGetFilePathReturnsFullyQualifiedPath()
@@ -60,8 +60,14 @@ class LocalFileTest extends FileTestCase
 
     public function testCompression()
     {
-        $file = new LocalFile(static::$dir . 'file_compression.test', CompressionType::GZIP);
+        $file = new LocalFile(static::$dir . 'file_compression.test', ['compression' => CompressionType::GZIP]);
         static::assertEquals('gzip', $file->getCompression());
+    }
+
+    public function testEncoding()
+    {
+        $file = new LocalFile(static::$dir . 'file_encoding.test', ['encoding' => 'UTF-8']);
+        static::assertEquals('UTF-8', $file->getEncoding());
     }
 
     public function testToString()
@@ -90,5 +96,48 @@ class LocalFileTest extends FileTestCase
         $compressed->getContents();
 
         static::assertFalse(file_exists(static::$dir . 'file_uncompressed_todelete'), "The uncompressed file should be deleted");
+    }
+
+    public function testSetEncodingModifiesTheEncoding()
+    {
+        $file = new LocalFile(static::$dir . 'file_set_encoding.test');
+        file_put_contents($file->getFilePath(), 'uncompressed contents');
+
+        $file->setEncoding('us-ascii');
+
+        static::assertEquals('us-ascii', $file->getEncoding());
+    }
+
+    public function testSetEncodingReturnsIsFluent()
+    {
+        $file = new LocalFile(static::$dir . 'file_set_encoding2.test');
+        file_put_contents($file->getFilePath(), 'uncompressed contents');
+
+        $newFile = $file->setEncoding('us-ascii');
+
+        static::assertNotNull($newFile);
+        static::assertSame($file, $newFile);
+    }
+
+
+    public function testSetCompressionModifiesTheEncoding()
+    {
+        $file = new LocalFile(static::$dir . 'file_set_compression.test');
+        file_put_contents($file->getFilePath(), 'uncompressed contents');
+
+        $file->setCompression(CompressionType::GZIP);
+
+        static::assertEquals(CompressionType::GZIP, $file->getCompression());
+    }
+
+    public function testSetCompressionReturnsIsFluent()
+    {
+        $file = new LocalFile(static::$dir . 'file_set_compression2.test');
+        file_put_contents($file->getFilePath(), 'uncompressed contents');
+
+        $newFile = $file->setCompression(CompressionType::GZIP);
+
+        static::assertNotNull($newFile);
+        static::assertSame($file, $newFile);
     }
 }

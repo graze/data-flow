@@ -2,24 +2,24 @@
 
 namespace Graze\DataFlow\Flow\File\Compression;
 
-use Graze\DataFlow\Flow\FlowInterface;
-use Graze\DataFlow\Flowable\FlowableInterface;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\Extensible\ExtensibleInterface;
+use Graze\Extensible\ExtensionInterface;
 use InvalidArgumentException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class Zip implements FlowInterface, CompressorInterface
+class Zip implements ExtensionInterface, CompressorInterface
 {
     /**
      * Determine if this object can act upon the supplied node
      *
-     * @param FlowableInterface $node
-     * @param                   $method
+     * @param ExtensibleInterface $node
+     * @param string              $method
      * @return bool
      */
-    public function canFlow(FlowableInterface $node, $method)
+    public function canExtend(ExtensibleInterface $node, $method)
     {
         if (!($node instanceof LocalFile)) {
             return false;
@@ -31,6 +31,8 @@ class Zip implements FlowInterface, CompressorInterface
     }
 
     /**
+     * @extend Graze\DataFlow\Node\File\LocalFile
+     *
      * @param FileNodeInterface $file
      * @param array             $options -keepOldFile <bool> (Default: true)
      * @return FileNodeInterface
@@ -45,7 +47,10 @@ class Zip implements FlowInterface, CompressorInterface
 
         $outputFile = new LocalFile(
             $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.zip',
-            CompressionType::ZIP
+            [
+                'compression' => CompressionType::ZIP,
+                'encoding' => $file->getEncoding()
+            ]
         );
 
         $cmd = "zip {$outputFile->getFilePath()} {$file->getFilePath()}";
@@ -67,6 +72,8 @@ class Zip implements FlowInterface, CompressorInterface
     }
 
     /**
+     * @extend Graze\DataFlow\Node\File\LocalFile
+     *
      * @param FileNodeInterface $file
      * @param array             $options
      * @return FileNodeInterface
@@ -81,7 +88,10 @@ class Zip implements FlowInterface, CompressorInterface
 
         $outputFile = new LocalFile(
             $pathInfo['dirname'] . '/' . $pathInfo['filename'],
-            CompressionType::NONE
+            [
+                'compression' => CompressionType::NONE,
+                'encoding' => $file->getEncoding()
+            ]
         );
 
         $cmd = "unzip -p {$file->getFilePath()} > {$outputFile->getFilePath()}";

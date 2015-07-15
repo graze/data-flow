@@ -50,14 +50,6 @@ trait CsvDefinitionPassThrough
     }
 
     /**
-     * @return bool
-     */
-    public function isUnicode()
-    {
-        return $this->csvDefinition->isUnicode();
-    }
-
-    /**
      * @return string
      */
     public function getQuoteCharacter()

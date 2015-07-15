@@ -2,20 +2,20 @@
 
 namespace Graze\DataFlow\Flow\File\Compression;
 
-use Graze\DataFlow\Flow\FlowInterface;
-use Graze\DataFlow\Flowable\FlowableInterface;
 use Graze\DataFlow\Node\File\FileNodeInterface;
+use Graze\Extensible\ExtensibleInterface;
+use Graze\Extensible\ExtensionInterface;
 
-class CompressorFactory implements FlowInterface
+class CompressorFactory implements ExtensionInterface
 {
     /**
      * Determine if this object can act upon the supplied file
      *
-     * @param FlowableInterface $node
-     * @param                   $method
+     * @param ExtensibleInterface $node
+     * @param string              $method
      * @return bool
      */
-    public function canFlow(FlowableInterface $node, $method)
+    public function canExtend(ExtensibleInterface $node, $method)
     {
         return ($node instanceof FileNodeInterface);
     }
@@ -39,6 +39,8 @@ class CompressorFactory implements FlowInterface
     }
 
     /**
+     * @extend Graze\DataFlow\Node\File\FileNodeInterface
+     *
      * @param FileNodeInterface $file
      * @param string            $compression CompressionType::
      * @param array             $options     Options to be passed to the compressor
@@ -52,6 +54,8 @@ class CompressorFactory implements FlowInterface
     }
 
     /**
+     * @extend Graze\DataFlow\Node\File\FileNodeInterface
+     *
      * @param FileNodeInterface $file
      * @param array             $options Options to be passed to the compressor
      * @return FileNodeInterface
