@@ -4,7 +4,7 @@ namespace Graze\DataFlow\Test\File;
 
 use Graze\DataFlow\Test\TestCase;
 
-class FileTestCase extends TestCase
+abstract class FileTestCase extends TestCase
 {
     const TEST_DATA_PATH = '../../data/';
 

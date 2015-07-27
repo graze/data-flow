@@ -2,7 +2,11 @@
 
 namespace Graze\DataFlow\Node;
 
-use Graze\Extensible\AutoExtensible;
+use Graze\DataFlow\Container\ContainerExtensible;
+use Graze\Extensible\ExtensibleInterface;
+use Graze\Extensible\Finder\FinderAwareInterface;
+use League\Container\ContainerAwareInterface;
+use phpDocumentor\Reflection\DocBlock;
 
 /**
  * Class DataNode
@@ -13,7 +17,7 @@ use Graze\Extensible\AutoExtensible;
  *
  * @package Graze\DataFlow\Node
  */
-class DataNode extends AutoExtensible implements DataNodeInterface
+abstract class DataNode implements DataNodeInterface, ContainerAwareInterface, ExtensibleInterface, FinderAwareInterface
 {
-
+    use ContainerExtensible;
 }

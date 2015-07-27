@@ -2,11 +2,21 @@
 
 namespace Graze\DataFlow\Node\File;
 
-use Graze\DataFlow\Flow\File\Compression\CompressionType;
+use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 use Graze\DataFlow\Node\DataNode;
 
 class LocalFile extends DataNode implements FileNodeInterface
 {
+    /**
+     * @var string - CompressionType::
+     */
+    protected $compression;
+
+    /**
+     * @var string|null
+     */
+    protected $encoding;
+
     /**
      * @var string
      */
@@ -21,16 +31,6 @@ class LocalFile extends DataNode implements FileNodeInterface
      * @var mixed
      */
     private $contents;
-
-    /**
-     * @var string - CompressionType::
-     */
-    protected $compression;
-
-    /**
-     * @var string|null
-     */
-    protected $encoding;
 
     /**
      * @param string $filePath
@@ -51,11 +51,16 @@ class LocalFile extends DataNode implements FileNodeInterface
     }
 
     /**
-     * @return string
+     * @param $filePath
+     * @return LocalFile
      */
-    public function getFilePath()
+    public function setFilePath($filePath)
     {
-        return $this->directory . $this->filename;
+        $pathInfo = pathinfo($filePath);
+        $this->directory = $pathInfo['dirname'] . '/';
+        $this->filename = $pathInfo['basename'];
+
+        return $this;
     }
 
     /**
@@ -89,14 +94,6 @@ class LocalFile extends DataNode implements FileNodeInterface
     }
 
     /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getFilePath();
-    }
-
-    /**
      * @return bool
      */
     public function exists()
@@ -105,19 +102,27 @@ class LocalFile extends DataNode implements FileNodeInterface
     }
 
     /**
-     * @return string - see CompressionType::
+     * @return string
      */
-    public function getCompression()
+    public function getFilePath()
     {
-        return $this->compression;
+        return $this->directory . $this->filename;
     }
 
     /**
      * @return string
      */
-    public function getEncoding()
+    public function __toString()
     {
-        return $this->encoding;
+        return $this->getFilePath();
+    }
+
+    /**
+     * @return string - see CompressionType::
+     */
+    public function getCompression()
+    {
+        return $this->compression;
     }
 
     /**
@@ -131,6 +136,14 @@ class LocalFile extends DataNode implements FileNodeInterface
     }
 
     /**
+     * @return string
+     */
+    public function getEncoding()
+    {
+        return $this->encoding;
+    }
+
+    /**
      * @param null|string $encoding
      * @return LocalFile
      */
@@ -138,5 +151,23 @@ class LocalFile extends DataNode implements FileNodeInterface
     {
         $this->encoding = $encoding;
         return $this;
+    }
+
+    /**
+     * Return a clone of this object
+     *
+     * @return LocalFile
+     */
+    public function getClone()
+    {
+        return clone $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDirectory()
+    {
+        return $this->directory;
     }
 }

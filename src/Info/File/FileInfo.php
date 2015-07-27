@@ -2,8 +2,9 @@
 
 namespace Graze\DataFlow\Info\File;
 
-use Graze\DataFlow\Flow\File\Compression\CompressionType;
+use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\DataFlow\Utility\ProcessFactory;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -11,6 +12,19 @@ use Symfony\Component\Process\Process;
 
 class FileInfo implements ExtensionInterface
 {
+    /**
+     * @var ProcessFactory
+     */
+    protected $processFactory;
+
+    /**
+     * @param ProcessFactory $processFactory
+     */
+    public function __construct(ProcessFactory $processFactory)
+    {
+        $this->processFactory = $processFactory;
+    }
+
     /**
      * @param ExtensibleInterface $extensible
      * @param string              $method
@@ -35,7 +49,7 @@ class FileInfo implements ExtensionInterface
     {
         $cmd = "file --brief --uncompress --mime {$file->getFilePath()}";
 
-        $process = new Process($cmd);
+        $process = $this->processFactory->createProcess($cmd);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -60,7 +74,7 @@ class FileInfo implements ExtensionInterface
     {
         $cmd = "file --brief --uncompress --mime {$file->getFilePath()}";
 
-        $process = new Process($cmd);
+        $process = $this->processFactory->createProcess($cmd);
         $process->run();
 
         if (!$process->isSuccessful()) {

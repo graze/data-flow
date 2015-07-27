@@ -8,14 +8,12 @@ class CsvDefinition implements CsvDefinitionInterface
     const DEFAULT_NULL_OUTPUT     = '\\N';
     const DEFAULT_INCLUDE_HEADERS = true;
     const DEFAULT_LINE_TERMINATOR = "\n";
-    const DEFAULT_IS_UNICODE      = true;
     const DEFAULT_QUOTE_CHARACTER = '"';
 
     const OPTION_DELIMITER       = 'delimiter';
     const OPTION_NULL_OUTPUT     = 'nullOutput';
     const OPTION_INCLUDE_HEADERS = 'includeHeaders';
     const OPTION_LINE_TERMINATOR = 'lineTerminator';
-    const OPTION_IS_UNICODE      = 'isUnicode';
     const OPTION_QUOTE_CHARACTER = 'quoteCharacter';
 
     /**
@@ -84,6 +82,16 @@ class CsvDefinition implements CsvDefinitionInterface
     }
 
     /**
+     * @param string $delimiter
+     * @return CsvDefinition
+     */
+    public function setDelimiter($delimiter)
+    {
+        $this->delimiter = $delimiter;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function useQuotes()
@@ -100,11 +108,31 @@ class CsvDefinition implements CsvDefinitionInterface
     }
 
     /**
+     * @param string $nullOutput
+     * @return CsvDefinition
+     */
+    public function setNullOutput($nullOutput)
+    {
+        $this->nullOutput = $nullOutput;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function getIncludeHeaders()
     {
         return $this->includeHeaders;
+    }
+
+    /**
+     * @param boolean $includeHeaders
+     * @return CsvDefinition
+     */
+    public function setIncludeHeaders($includeHeaders)
+    {
+        $this->includeHeaders = $includeHeaders;
+        return $this;
     }
 
     /**
@@ -116,10 +144,30 @@ class CsvDefinition implements CsvDefinitionInterface
     }
 
     /**
+     * @param string $lineTerminator
+     * @return CsvDefinition
+     */
+    public function setLineTerminator($lineTerminator)
+    {
+        $this->lineTerminator = $lineTerminator;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getQuoteCharacter()
     {
         return $this->quoteCharacter;
+    }
+
+    /**
+     * @param string $quoteCharacter
+     * @return CsvDefinition
+     */
+    public function setQuoteCharacter($quoteCharacter)
+    {
+        $this->quoteCharacter = $quoteCharacter;
+        return $this;
     }
 }

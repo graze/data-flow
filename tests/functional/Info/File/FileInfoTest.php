@@ -2,10 +2,11 @@
 
 namespace Graze\DataFlow\Test\Functional\Info\File;
 
-use Graze\DataFlow\Flow\File\Compression\CompressionType;
+use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 use Graze\DataFlow\Info\File\FileInfo;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
+use Graze\DataFlow\Utility\ProcessFactory;
 use Mockery as m;
 
 class FileInfoTest extends FileTestCase
@@ -15,9 +16,15 @@ class FileInfoTest extends FileTestCase
      */
     protected $fileInfo;
 
+    /**
+     * @var ProcessFactory|m\MockInterface
+     */
+    protected $processFactory;
+
     public function setUp()
     {
-        $this->fileInfo = new FileInfo();
+        $this->processFactory = m::mock('Graze\DataFlow\Utility\ProcessFactory')->makePartial();
+        $this->fileInfo = new FileInfo($this->processFactory);
     }
 
     public function testCanExtendAcceptsLocalFile()
@@ -28,7 +35,7 @@ class FileInfoTest extends FileTestCase
         static::assertTrue($this->fileInfo->canExtend($localFile, 'findEncoding'));
         static::assertFalse(
             $this->fileInfo->canExtend($localFile, 'findEncoding'),
-            "CanFlow should return false if the file does not exist"
+            "CanExtend should return false if the file does not exist"
         );
 
         $randomThing = m::mock('Graze\DataFlow\Node\File\FileNodeInterface',
@@ -143,5 +150,74 @@ class FileInfoTest extends FileTestCase
             $gzipFile->findCompression()
         );
         static::assertEquals(CompressionType::GZIP, $gzipFile->getCompression());
+    }
+
+
+    public function testWhenTheProcessFailsAnExceptionIsThrownOnFindEncoding()
+    {
+        $process = m::mock('Symfony\Component\Process\Process')->makePartial();
+        $process->shouldReceive('isSuccessful')->andReturn(false);
+
+        $this->processFactory->shouldReceive('createProcess')
+            ->andReturn($process);
+
+        $file = new LocalFile(static::$dir . 'failed_find_encoding_process.test');
+        file_put_contents($file->getFilePath(), 'random stuff and things 2!');
+
+        static::setExpectedException(
+            'Symfony\Component\Process\Exception\ProcessFailedException'
+        );
+
+        $this->fileInfo->findEncoding($file);
+    }
+
+    public function testWhenTheProcessFailsAnExceptionIsThrownOnFindCompression()
+    {
+        $process = m::mock('Symfony\Component\Process\Process')->makePartial();
+        $process->shouldReceive('isSuccessful')->andReturn(false);
+
+        $this->processFactory->shouldReceive('createProcess')
+                             ->andReturn($process);
+
+        $file = new LocalFile(static::$dir . 'failed_find_encoding_process.test');
+        file_put_contents($file->getFilePath(), 'random stuff and things 2!');
+
+        static::setExpectedException(
+            'Symfony\Component\Process\Exception\ProcessFailedException'
+        );
+
+        $this->fileInfo->findCompression($file);
+    }
+
+    public function testWhenTheProcessReturnsAnUnknownEncodingUnknownTypeIsReturned()
+    {
+        $process = m::mock('Symfony\Component\Process\Process')->makePartial();
+        $process->shouldReceive('run');
+        $process->shouldReceive('isSuccessful')->andReturn(true);
+        $process->shouldReceive('getOutput')->andReturn('text/plain; charset=utf-8 compressed-encoding=application/lzop; charset=binary; charset=binary');
+
+        $this->processFactory->shouldReceive('createProcess')
+                             ->andReturn($process);
+
+        $file = new LocalFile(static::$dir . 'unknown_compression.test');
+        file_put_contents($file->getFilePath(), 'random stuff and things 2!');
+
+        static::assertEquals(CompressionType::UNKNOWN, $this->fileInfo->findCompression($file));
+    }
+
+    public function testWhenTheProcessReturnsAnUnknownFileNullIsReturned()
+    {
+        $process = m::mock('Symfony\Component\Process\Process')->makePartial();
+        $process->shouldReceive('run');
+        $process->shouldReceive('isSuccessful')->andReturn(true);
+        $process->shouldReceive('getOutput')->andReturn('some random stuff with no charset');
+
+        $this->processFactory->shouldReceive('createProcess')
+                             ->andReturn($process);
+
+        $file = new LocalFile(static::$dir . 'unknown_compression.test');
+        file_put_contents($file->getFilePath(), 'random stuff and things 2!');
+
+        static::assertNull($this->fileInfo->findEncoding($file));
     }
 }

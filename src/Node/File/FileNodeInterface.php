@@ -2,8 +2,15 @@
 
 namespace Graze\DataFlow\Node\File;
 
-interface FileNodeInterface
+use Graze\DataFlow\Node\DataNodeInterface;
+
+interface FileNodeInterface extends DataNodeInterface
 {
+    /**
+     * @return mixed
+     */
+    public function getDirectory();
+
     /**
      * @return string
      */
@@ -30,11 +37,6 @@ interface FileNodeInterface
      * @return string
      */
     public function getEncoding();
-
-    /**
-     * @return string
-     */
-    public function __toString();
 
     /**
      * @return bool

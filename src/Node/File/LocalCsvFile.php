@@ -2,9 +2,9 @@
 
 namespace Graze\DataFlow\Node\File;
 
-use Graze\DataFlow\Flow\File\Compression\CompressionType;
 use Graze\DataFlow\Definition\CsvDefinitionInterface;
 use Graze\DataFlow\Definition\CsvDefinitionPassThrough;
+use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 
 class LocalCsvFile extends LocalFile implements CsvFileNodeInterface
 {
@@ -19,5 +19,10 @@ class LocalCsvFile extends LocalFile implements CsvFileNodeInterface
     {
         parent::__construct($filePath, $compression);
         $this->csvDefinition = $csvDefinition;
+    }
+
+    public function __clone()
+    {
+        $this->csvDefinition = clone $this->csvDefinition;
     }
 }

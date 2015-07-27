@@ -2,7 +2,7 @@
 
 namespace Graze\DataFlow\Test\Functional\Node\File;
 
-use Graze\DataFlow\Flow\File\Compression\CompressionType;
+use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
 
@@ -139,5 +139,12 @@ class LocalFileTest extends FileTestCase
 
         static::assertNotNull($newFile);
         static::assertSame($file, $newFile);
+    }
+
+    public function testGetDirectoryReturnsJustTheDirectory()
+    {
+        $file = new LocalFile(static::$dir . 'file_dont_care.test');
+
+        static::assertEquals(static::$dir, $file->getDirectory());
     }
 }

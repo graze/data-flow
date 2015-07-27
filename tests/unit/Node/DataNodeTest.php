@@ -2,20 +2,20 @@
 
 namespace Graze\DataFlow\Test\Unit\Node;
 
-use Graze\DataFlow\Node\DataNode;
 use Graze\DataFlow\Test\TestCase;
+use Mockery as m;
 
 class DataNodeTest extends TestCase
 {
     public function testIsExtensible()
     {
-        $node = new DataNode();
+        $node = m::mock('Graze\DataFlow\Node\DataNode');
         static::assertInstanceOf('Graze\Extensible\ExtensibleInterface', $node);
     }
 
     public function testImplementsDataNodeInterface()
     {
-        $node = new DataNode();
+        $node = m::mock('Graze\DataFlow\Node\DataNode');
         static::assertInstanceOf('Graze\DataFlow\Node\DataNodeInterface', $node);
     }
 }
