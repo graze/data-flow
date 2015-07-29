@@ -13,6 +13,7 @@ use Graze\DataFlow\Node\File\FileNodeCollection;
 use Graze\DataFlow\Node\File\FileNodeCollectionInterface;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\DataFlow\Utility\GetOption;
 use Graze\DataFlow\Utility\ProcessFactory;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
@@ -21,6 +22,8 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterface
 {
+    use GetOption;
+
     const PART_PREFIX = 'part_';
 
     const TYPE_PART  = 'part';
@@ -28,11 +31,6 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
 
     const VERSION_GNU  = 'GNU';
     const VERSION_UNIX = 'UNIX';
-
-    /**
-     * @var array
-     */
-    protected $options;
 
     /**
      * @var ProcessFactory
@@ -108,18 +106,6 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
         } else {
             return $this->split($file, static::TYPE_LINES, $byLines);
         }
-    }
-
-    /**
-     * Get an option value
-     *
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    private function getOption($name, $default)
-    {
-        return (isset($this->options[$name])) ? $this->options[$name] : $default;
     }
 
     /**
@@ -294,13 +280,13 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
     {
         // create file collection out of newly created files
         $collection = new FileNodeCollection();
-        $collection->addFilesFromDirectory(
+        return $collection->addFilesFromDirectory(
             $directory,
             function ($file) {
                 return new LocalFile($file);
             }
         )
-                   ->map(function (FileNodeInterface $item) {
+                   ->apply(function (FileNodeInterface &$item) {
                        return $item->replaceText(
                            [
                                "(?<!\\\\\\\\)\\\\\\\\n",
@@ -314,7 +300,6 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
                            ]
                        );
                    });
-        return $collection;
     }
 
     /**

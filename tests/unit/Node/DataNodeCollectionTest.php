@@ -50,4 +50,39 @@ class DataNodeCollectionTest extends TestCase
 
         $this->collection->add($node);
     }
+
+    public function testCallingApplyWillModifyTheContentsUsingReference()
+    {
+        $node = m::mock('Graze\DataFlow\Node\DataNodeInterface');
+        $node->shouldReceive('someMethod')
+            ->once()
+            ->andReturn(null);
+
+        $this->collection->add($node);
+
+        $this->collection->apply(function (&$item) {
+            $item->someMethod();
+        });
+
+        $item = $this->collection->getAll()[0];
+        static::assertSame($node, $item);
+    }
+
+    public function testCallingApplyWillModifyTheContentsUsingReturnValue()
+    {
+        $node = m::mock('Graze\DataFlow\Node\DataNodeInterface');
+        $node->shouldReceive('someMethod')
+             ->once()
+             ->andReturn(null);
+
+        $this->collection->add($node);
+
+        $this->collection->apply(function ($item) {
+            $item->someMethod();
+            return $item;
+        });
+
+        $item = $this->collection->getAll()[0];
+        static::assertSame($node, $item);
+    }
 }

@@ -6,12 +6,15 @@ use Graze\DataFlow\Flow\File\Modify\Exception\CopyFailedException;
 use Graze\DataFlow\Flow\Flow;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\DataFlow\Utility\GetOption;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
 use InvalidArgumentException;
 
 class Copy extends Flow implements ExtensionInterface, FileModifierInterface
 {
+    use GetOption;
+
     /**
      * Modify the file
      *
@@ -22,7 +25,8 @@ class Copy extends Flow implements ExtensionInterface, FileModifierInterface
      */
     public function modify(FileNodeInterface $file, array $options = [])
     {
-        $outputFilePath = $this->getOption($options, 'outputFilePath', null);
+        $this->options = $options;
+        $outputFilePath = $this->getOption('outputFilePath', null);
 
         if (!($file instanceof LocalFile)) {
             throw new InvalidArgumentException("Supplied $file is not a LocalFile");
@@ -35,19 +39,6 @@ class Copy extends Flow implements ExtensionInterface, FileModifierInterface
         } else {
             return $this->copy($file);
         }
-    }
-
-    /**
-     * Get an option value
-     *
-     * @param array  $options
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    private function getOption($options, $name, $default)
-    {
-        return (isset($options[$name])) ? $options[$name] : $default;
     }
 
     /**

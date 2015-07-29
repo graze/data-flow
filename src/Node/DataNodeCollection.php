@@ -16,7 +16,7 @@ use League\Container\ContainerAwareInterface;
  *
  * @package Graze\DataFlow\Node
  */
-class DataNodeCollection extends Collection implements ExtensibleInterface, ContainerAwareInterface, FinderAwareInterface
+class DataNodeCollection extends Collection implements DataNodeCollectionInterface, ExtensibleInterface, ContainerAwareInterface, FinderAwareInterface
 {
     use ContainerExtensible;
 
@@ -29,5 +29,20 @@ class DataNodeCollection extends Collection implements ExtensibleInterface, Cont
             throw new InvalidArgumentException("The specified value does not implement DataNodeInterface");
         }
         return parent::add($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function apply($fn)
+    {
+        foreach ($this->getIterator() as &$item) {
+            $out = call_user_func($fn, $item);
+            if (isset($out) && ($out instanceof DataNodeInterface)) {
+                $item = $out;
+            }
+        }
+
+        return $this;
     }
 }

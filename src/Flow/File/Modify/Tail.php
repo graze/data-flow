@@ -5,6 +5,7 @@ namespace Graze\DataFlow\Flow\File\Modify;
 use Graze\DataFlow\Flow\Flow;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\DataFlow\Utility\GetOption;
 use Graze\DataFlow\Utility\ProcessFactory;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
@@ -14,6 +15,8 @@ use Symfony\Component\Process\Process;
 
 class Tail extends Flow implements ExtensionInterface, FileModifierInterface
 {
+    use GetOption;
+
     /**
      * @var ProcessFactory
      */
@@ -64,7 +67,8 @@ class Tail extends Flow implements ExtensionInterface, FileModifierInterface
      */
     public function modify(FileNodeInterface $file, array $options = [])
     {
-        $lines = $this->getOption($options, 'lines', null);
+        $this->options = $options;
+        $lines = $this->getOption('lines', null);
 
         if (is_null($lines)) {
             throw new InvalidArgumentException("Missing option: 'lines'");
@@ -77,19 +81,6 @@ class Tail extends Flow implements ExtensionInterface, FileModifierInterface
         }
 
         return $this->tail($file, $lines, $options);
-    }
-
-    /**
-     * Get an option value
-     *
-     * @param array  $options
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    private function getOption($options, $name, $default)
-    {
-        return (isset($options[$name])) ? $options[$name] : $default;
     }
 
     /**
@@ -106,7 +97,9 @@ class Tail extends Flow implements ExtensionInterface, FileModifierInterface
      */
     public function tail(LocalFile $file, $lines, array $options = [])
     {
-        $postfix = $this->getOption($options, 'postfix', 'tail');
+        $this->options = $options;
+
+        $postfix = $this->getOption('postfix', 'tail');
         if (strlen($postfix) > 0) {
             $postfix = '-' . $postfix;
         }
@@ -127,7 +120,7 @@ class Tail extends Flow implements ExtensionInterface, FileModifierInterface
             throw new ProcessFailedException($process);
         }
 
-        if (!$this->getOption($options, 'keepOldFile', true)) {
+        if (!$this->getOption('keepOldFile', true)) {
             unlink($file->getFilePath());
         }
 

@@ -2,8 +2,12 @@
 
 namespace Graze\DataFlow\Definition;
 
+use Graze\DataFlow\Utility\GetOption;
+
 class CsvDefinition implements CsvDefinitionInterface
 {
+    use GetOption;
+
     const DEFAULT_DELIMITER       = ',';
     const DEFAULT_NULL_OUTPUT     = '\\N';
     const DEFAULT_INCLUDE_HEADERS = true;
@@ -15,11 +19,6 @@ class CsvDefinition implements CsvDefinitionInterface
     const OPTION_INCLUDE_HEADERS = 'includeHeaders';
     const OPTION_LINE_TERMINATOR = 'lineTerminator';
     const OPTION_QUOTE_CHARACTER = 'quoteCharacter';
-
-    /**
-     * @var array
-     */
-    protected $options;
 
     /**
      * @var string
@@ -61,16 +60,6 @@ class CsvDefinition implements CsvDefinitionInterface
         $this->nullOutput = $this->getOption(static::OPTION_NULL_OUTPUT, static::DEFAULT_NULL_OUTPUT);
         $this->includeHeaders = $this->getOption(static::OPTION_INCLUDE_HEADERS, static::DEFAULT_INCLUDE_HEADERS);
         $this->lineTerminator = $this->getOption(static::OPTION_LINE_TERMINATOR, static::DEFAULT_LINE_TERMINATOR);
-    }
-
-    /**
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    private function getOption($name, $default)
-    {
-        return (isset($this->options[$name])) ? $this->options[$name] : $default;
     }
 
     /**

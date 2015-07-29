@@ -4,6 +4,7 @@ namespace Graze\DataFlow\Flow\File\Modify;
 
 use Graze\DataFlow\Flow\Flow;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\DataFlow\Utility\GetOption;
 use Graze\DataFlow\Utility\ProcessFactory;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
@@ -25,6 +26,8 @@ use Symfony\Component\Process\Process;
  */
 class ConvertEncoding extends Flow implements ExtensionInterface
 {
+    use GetOption;
+
     /**
      * @var ProcessFactory
      */
@@ -60,12 +63,14 @@ class ConvertEncoding extends Flow implements ExtensionInterface
      */
     public function toEncoding(LocalFile $file, $toEncoding, array $options = [])
     {
+        $this->options = $options;
+
         $pathInfo = pathinfo($file->getFilePath());
 
         $outputFileName = sprintf(
             '%s-%s.%s',
             $pathInfo['filename'],
-            $this->getOption($options, 'postfix', $toEncoding),
+            $this->getOption('postfix', $toEncoding),
             $pathInfo['extension']
         );
 
@@ -86,23 +91,10 @@ class ConvertEncoding extends Flow implements ExtensionInterface
             throw new ProcessFailedException($process);
         }
 
-        if (!$this->getOption($options, 'keepOldFile', true)) {
+        if (!$this->getOption('keepOldFile', true)) {
             unlink($file->getFilePath());
         }
 
         return $output;
-    }
-
-    /**
-     * Get an option value
-     *
-     * @param array  $options
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    private function getOption($options, $name, $default)
-    {
-        return (isset($options[$name])) ? $options[$name] : $default;
     }
 }

@@ -5,6 +5,7 @@ namespace Graze\DataFlow\Flow\File\Modify;
 use Graze\DataFlow\Flow\Flow;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
+use Graze\DataFlow\Utility\GetOption;
 use Graze\DataFlow\Utility\ProcessFactory;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
@@ -14,6 +15,8 @@ use Symfony\Component\Process\Process;
 
 class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterface
 {
+    use GetOption;
+
     /**
      * @param ProcessFactory $processFactory
      */
@@ -63,8 +66,9 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
      */
     public function modify(FileNodeInterface $file, array $options = [])
     {
-        $fromText = $this->getOption($options, 'fromText', null);
-        $toText = $this->getOption($options, 'toText', null);
+        $this->options = $options;
+        $fromText = $this->getOption('fromText', null);
+        $toText = $this->getOption('toText', null);
 
         if (is_null($fromText)) {
             throw new InvalidArgumentException("Missing option: 'fromText'");
@@ -84,19 +88,6 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
     }
 
     /**
-     * Get an option value
-     *
-     * @param array  $options
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    private function getOption($options, $name, $default)
-    {
-        return (isset($options[$name])) ? $options[$name] : $default;
-    }
-
-    /**
      * @extend Graze\DataFlow\Node\File\LocalFile
      * @param LocalFile       $file
      * @param string|string[] $fromText
@@ -110,7 +101,8 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
      */
     public function replaceText(LocalFile $file, $fromText, $toText, array $options = [])
     {
-        $postfix = $this->getOption($options, 'postfix', 'replace');
+        $this->options = $options;
+        $postfix = $this->getOption('postfix', 'replace');
         if (strlen($postfix) > 0) {
             $postfix = '-' . $postfix;
         }
@@ -163,7 +155,7 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
             throw new ProcessFailedException($process);
         }
 
-        if (!$this->getOption($options, 'keepOldFile', true)) {
+        if (!$this->getOption('keepOldFile', true)) {
             unlink($file->getFilePath());
         }
 
