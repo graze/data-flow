@@ -17,12 +17,12 @@ class LocalFileTest extends FileTestCase
 
     public function testGetFilePathReturnsFullyQualifiedPath()
     {
-        file_put_contents(static::$dir . 'file_path.test', 'random');
         $file = new LocalFile(static::$dir . 'file_path.test');
+        $file->put('random');
 
-        $expected = realpath(static::$dir . 'file_path.test');
+        $expected = static::$dir . 'file_path.test';
 
-        static::assertEquals($expected, $file->getFilePath());
+        static::assertEquals($expected, $file->getPath());
     }
 
     public function testGetFilenameJustReturnsTheFilename()
@@ -38,7 +38,7 @@ class LocalFileTest extends FileTestCase
 
         static::assertFalse($file->exists());
 
-        file_put_contents($file->getFilePath(), 'random');
+        $file->put('random');
 
         static::assertTrue($file->exists());
     }
@@ -47,7 +47,7 @@ class LocalFileTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'file_get_contents.test');
 
-        file_put_contents($file->getFilePath(), 'content stuff');
+        $file->put('content stuff');
 
         static::assertEquals(['content stuff'], $file->getContents());
     }
@@ -60,26 +60,28 @@ class LocalFileTest extends FileTestCase
 
     public function testCompression()
     {
-        $file = new LocalFile(static::$dir . 'file_compression.test', ['compression' => CompressionType::GZIP]);
+        $file = (new LocalFile(static::$dir . 'file_compression.test'))
+            ->setCompression(CompressionType::GZIP);
         static::assertEquals('gzip', $file->getCompression());
     }
 
     public function testEncoding()
     {
-        $file = new LocalFile(static::$dir . 'file_encoding.test', ['encoding' => 'UTF-8']);
+        $file = (new LocalFile(static::$dir . 'file_encoding.test'))
+            ->setEncoding('UTF-8');
         static::assertEquals('UTF-8', $file->getEncoding());
     }
 
     public function testToString()
     {
         $file = new LocalFile(static::$dir . 'to_string.test');
-        static::assertEquals($file->getFilePath(), $file);
+        static::assertEquals($file->getPath(), $file);
     }
 
     public function testGetContentsForCompressedFile()
     {
         $file = new LocalFile(static::$dir . 'file_uncompressed.test');
-        file_put_contents($file->getFilePath(), 'uncompressed contents');
+        $file->put('uncompressed contents');
 
         $compressed = $file->compress(CompressionType::GZIP, ['keepOldFile' => true]);
 
@@ -89,7 +91,7 @@ class LocalFileTest extends FileTestCase
     public function testGetContentsForCompressedFileDeletesTheUncompressedFileAfterwards()
     {
         $file = new LocalFile(static::$dir . 'file_uncompressed_todelete.test');
-        file_put_contents($file->getFilePath(), 'uncompressed contents');
+        $file->put('uncompressed contents');
 
         $compressed = $file->compress(CompressionType::GZIP, ['keepOldFile' => true]);
 
@@ -101,7 +103,7 @@ class LocalFileTest extends FileTestCase
     public function testSetEncodingModifiesTheEncoding()
     {
         $file = new LocalFile(static::$dir . 'file_set_encoding.test');
-        file_put_contents($file->getFilePath(), 'uncompressed contents');
+        $file->put('uncompressed contents');
 
         $file->setEncoding('us-ascii');
 
@@ -111,7 +113,7 @@ class LocalFileTest extends FileTestCase
     public function testSetEncodingReturnsIsFluent()
     {
         $file = new LocalFile(static::$dir . 'file_set_encoding2.test');
-        file_put_contents($file->getFilePath(), 'uncompressed contents');
+        $file->put('uncompressed contents');
 
         $newFile = $file->setEncoding('us-ascii');
 
@@ -123,7 +125,7 @@ class LocalFileTest extends FileTestCase
     public function testSetCompressionModifiesTheEncoding()
     {
         $file = new LocalFile(static::$dir . 'file_set_compression.test');
-        file_put_contents($file->getFilePath(), 'uncompressed contents');
+        $file->put('uncompressed contents');
 
         $file->setCompression(CompressionType::GZIP);
 
@@ -133,7 +135,7 @@ class LocalFileTest extends FileTestCase
     public function testSetCompressionReturnsIsFluent()
     {
         $file = new LocalFile(static::$dir . 'file_set_compression2.test');
-        file_put_contents($file->getFilePath(), 'uncompressed contents');
+        $file->put('uncompressed contents');
 
         $newFile = $file->setCompression(CompressionType::GZIP);
 

@@ -14,7 +14,7 @@ use Graze\DataFlow\Node\File\FileNodeCollectionInterface;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Utility\GetOption;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactoryInterface;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
 use InvalidArgumentException;
@@ -33,17 +33,19 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
     const VERSION_UNIX = 'UNIX';
 
     /**
-     * @var ProcessFactory
+     * @var ProcessFactoryInterface
      */
     protected $processFactory;
 
-    public function __construct(ProcessFactory $processFactory)
+    /**
+     * @param ProcessFactoryInterface $processFactory
+     */
+    public function __construct(ProcessFactoryInterface $processFactory)
     {
         MakeDirectory::aware();
         AddFilesFromDirectory::aware();
         ReplaceText::aware();
         Tail::aware();
-        Copy::aware();
 
         $this->processFactory = $processFactory;
     }
@@ -118,7 +120,7 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
     {
         $folder = $this->prepareFolder($file);
         $tmpFile = $this->prepareFile($file);
-        $extension = pathinfo($file->getFilePath(), PATHINFO_EXTENSION);
+        $extension = pathinfo($file->getPath(), PATHINFO_EXTENSION);
         $prefix = $folder->getDirectory() . static::PART_PREFIX;
 
         $cmd = $this->getCommand(
@@ -126,7 +128,7 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
             $type,
             $option,
             $extension,
-            $tmpFile->getFilePath(),
+            $tmpFile->getPath(),
             $prefix
         );
 
@@ -140,9 +142,9 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
         $collection = $this->postProcessFolder($folder->getDirectory());
 
         // tidy up
-        unlink($tmpFile->getFilePath());
+        $tmpFile->delete();
         if (!$this->getOption('keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $collection;
@@ -156,7 +158,7 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
     {
         $postfix = $this->getOption('postfix', strftime('%Y%m%d_%H%M%S'));
 
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
 
         $folder = new LocalFile($pathInfo['dirname'] . '/' . $pathInfo['filename'] . '-' . $postfix . '/part');
         $folder->makeDirectory();
@@ -286,20 +288,20 @@ class SplitFile extends Flow implements ExtensionInterface, FileExpanderInterfac
                 return new LocalFile($file);
             }
         )
-                   ->apply(function (FileNodeInterface &$item) {
-                       return $item->replaceText(
-                           [
-                               "(?<!\\\\\\\\)\\\\\\\\n",
-                               "(?<!\\\\\\\\)\\\\\\\\r",
-                               "(\\\\\\\\)+(n|r)",
-                           ],
-                           [
-                               "\\\\\\n",
-                               "\\\\\\r",
-                               "\\1\\2",
-                           ]
-                       );
-                   });
+                          ->apply(function (FileNodeInterface &$item) {
+                              return $item->replaceText(
+                                  [
+                                      "(?<!\\\\\\\\)\\\\\\\\n",
+                                      "(?<!\\\\\\\\)\\\\\\\\r",
+                                      "(\\\\\\\\)+(n|r)",
+                                  ],
+                                  [
+                                      "\\\\\\n",
+                                      "\\\\\\r",
+                                      "\\1\\2",
+                                  ]
+                              );
+                          });
     }
 
     /**

@@ -55,29 +55,29 @@ class Gzip extends Flow implements ExtensionInterface, CompressorInterface
      */
     public function gzip(LocalFile $file, array $options = [])
     {
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
 
         if (!$file->exists()) {
             throw new InvalidArgumentException("The file: $file does not exist");
         }
 
         $outputFile = $file->getClone()
-                           ->setFilePath($pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.gz')
+                           ->setPath($pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.gz')
                            ->setCompression(CompressionType::GZIP);
 
-        $cmd = "gzip -c {$file->getFilePath()} > {$outputFile->getFilePath()}";
+        $cmd = "gzip -c {$file->getPath()} > {$outputFile->getPath()}";
 
         // @todo Logging
 
         $process = new Process($cmd);
         $process->run();
 
-        if (!$process->isSuccessful() || !file_exists($outputFile->getFilePath()) || exec("wc -c < {$outputFile->getFilePath()}") == 0) {
+        if (!$process->isSuccessful() || !$outputFile->exists() || exec("wc -c < {$outputFile->getPath()}") == 0) {
             throw new ProcessFailedException($process);
         }
 
         if (!$this->getOption($options, 'keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $outputFile;
@@ -120,29 +120,29 @@ class Gzip extends Flow implements ExtensionInterface, CompressorInterface
      */
     public function gunzip(LocalFile $file, array $options = [])
     {
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
 
         if (!$file->exists()) {
             throw new InvalidArgumentException("The file: $file does not exist");
         }
 
         $outputFile = $file->getClone()
-                           ->setFilePath($pathInfo['dirname'] . '/' . $pathInfo['filename'])
+                           ->setPath($pathInfo['dirname'] . '/' . $pathInfo['filename'])
                            ->setCompression(CompressionType::NONE);
 
-        $cmd = "gunzip -c {$file->getFilePath()} > {$outputFile->getFilePath()}";
+        $cmd = "gunzip -c {$file->getPath()} > {$outputFile->getPath()}";
 
         // @todo Logging
 
         $process = new Process($cmd);
         $process->run();
 
-        if (!$process->isSuccessful() || !file_exists($outputFile->getFilePath()) || exec("wc -c < {$outputFile->getFilePath()}") == 0) {
+        if (!$process->isSuccessful() || !file_exists($outputFile->getPath()) || exec("wc -c < {$outputFile->getPath()}") == 0) {
             throw new ProcessFailedException($process);
         }
 
         if (!$this->getOption($options, 'keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $outputFile;

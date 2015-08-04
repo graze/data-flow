@@ -23,6 +23,9 @@ class ContainerServiceProviderTest extends TestCase
     {
         $expected = [
             'Graze\Extensible\Finder\ClassBuilder\ClassBuilderInterface',
+            'Graze\Extensible\Finder\Discovery\DiscoveryInterface',
+            'Graze\Extensible\Finder\Reflection\ReflectionHelperInterface',
+            'Graze\DataFlow\Utility\Process\ProcessFactoryInterface',
         ];
 
         $actual = $this->provider->provides();
@@ -64,6 +67,12 @@ class ContainerServiceProviderTest extends TestCase
                       'Graze\Extensible\Finder\Reflection\ReflectionHelper'
                   )
                   ->once();
+        $container->shouldReceive('add')
+            ->with(
+                'Graze\DataFlow\Utility\Process\ProcessFactoryInterface',
+                'Graze\DataFlow\Utility\Process\ProcessFactory'
+            )
+            ->once();
 
         $this->provider->setContainer($container);
         $this->provider->register();

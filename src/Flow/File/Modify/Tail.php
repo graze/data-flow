@@ -6,26 +6,25 @@ use Graze\DataFlow\Flow\Flow;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Utility\GetOption;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactoryInterface;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
 use InvalidArgumentException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class Tail extends Flow implements ExtensionInterface, FileModifierInterface
 {
     use GetOption;
 
     /**
-     * @var ProcessFactory
+     * @var ProcessFactoryInterface
      */
     protected $processFactory;
 
     /**
-     * @param ProcessFactory $processFactory
+     * @param ProcessFactoryInterface $processFactory
      */
-    public function __construct(ProcessFactory $processFactory)
+    public function __construct(ProcessFactoryInterface $processFactory)
     {
         $this->processFactory = $processFactory;
     }
@@ -104,14 +103,14 @@ class Tail extends Flow implements ExtensionInterface, FileModifierInterface
             $postfix = '-' . $postfix;
         }
 
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
         $outputFileName = $pathInfo['filename'] . $postfix . '.' . $pathInfo['extension'];
         $outputFilePath = $pathInfo['dirname'] . '/' . $outputFileName;
 
         $output = $file->getClone()
-                       ->setFilePath($outputFilePath);
+                       ->setPath($outputFilePath);
 
-        $cmd = sprintf('tail -n %s %s > %s', $lines, $file->getFilePath(), $output->getFilePath());
+        $cmd = sprintf('tail -n %s %s > %s', $lines, $file->getPath(), $output->getPath());
 
         $process = $this->processFactory->createProcess($cmd);
         $process->run();
@@ -121,7 +120,7 @@ class Tail extends Flow implements ExtensionInterface, FileModifierInterface
         }
 
         if (!$this->getOption('keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $output;

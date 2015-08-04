@@ -1,22 +1,22 @@
 <?php
 
-namespace Graze\DataFlow\Test\Unit\Definition;
+namespace Graze\DataFlow\Test\Unit\Format;
 
-use Graze\DataFlow\Definition\CsvDefinition;
+use Graze\DataFlow\Format\CsvFormat;
 use Graze\DataFlow\Test\TestCase;
 
-class CsvDefinitionTest extends TestCase
+class CsvFormatTest extends TestCase
 {
     public function testImplementsInterface()
     {
-        $definition = new CsvDefinition();
+        $definition = new CsvFormat();
 
-        static::assertInstanceOf('Graze\DataFlow\Definition\CsvDefinitionInterface', $definition);
+        static::assertInstanceOf('Graze\DataFlow\Format\CsvFormatInterface', $definition);
     }
 
     public function testDefaultsAreAssignedWhenNoOptionsSupplied()
     {
-        $definition = new CsvDefinition();
+        $definition = new CsvFormat();
 
         static::assertEquals(',', $definition->getDelimiter(), "Default Delimiter should be ','");
         static::assertEquals('"', $definition->getQuoteCharacter(), "Default quote character should be \"");
@@ -28,7 +28,7 @@ class CsvDefinitionTest extends TestCase
 
     public function testAssigningOptionsModifiesTheDefinition()
     {
-        $definition = new CsvDefinition([
+        $definition = new CsvFormat([
             'delimiter'      => "\t",
             'quoteCharacter' => '',
             'nullOutput'     => '',
@@ -46,7 +46,7 @@ class CsvDefinitionTest extends TestCase
 
     public function testSettingProperties()
     {
-        $definition = new CsvDefinition();
+        $definition = new CsvFormat();
 
         static::assertEquals(',', $definition->getDelimiter(), "Default Delimiter should be ','");
         static::assertEquals('"', $definition->getQuoteCharacter(), "Default quote character should be \"");

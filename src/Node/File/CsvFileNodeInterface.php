@@ -2,9 +2,9 @@
 
 namespace Graze\DataFlow\Node\File;
 
-use Graze\DataFlow\Definition\CsvDefinitionInterface;
+use Graze\DataFlow\Format\CsvFormatInterface;
 
-interface CsvFileNodeInterface extends FileNodeInterface, CsvDefinitionInterface
+interface CsvFileNodeInterface extends FileNodeInterface, CsvFormatInterface
 {
 
 }

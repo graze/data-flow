@@ -5,7 +5,7 @@ namespace Graze\DataFlow\Test\Fuctional\Flow\File\Modify;
 use Graze\DataFlow\Flow\File\Modify\ReplaceText;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactory;
 use Mockery as m;
 use Mockery\MockInterface;
 
@@ -23,7 +23,7 @@ class ReplaceTextTest extends FileTestCase
 
     public function setUp()
     {
-        $this->processFactory = m::mock('Graze\DataFlow\Utility\ProcessFactory')->makePartial();
+        $this->processFactory = m::mock('Graze\DataFlow\Utility\Process\ProcessFactory')->makePartial();
         $this->replacer = new ReplaceText($this->processFactory);
     }
 
@@ -78,7 +78,7 @@ class ReplaceTextTest extends FileTestCase
     public function testReplaceTextReplacesASingleEntry()
     {
         $file = new LocalFile(static::$dir . 'simple_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, 'text', 'pants');
 
@@ -89,7 +89,7 @@ class ReplaceTextTest extends FileTestCase
     public function testReplaceTextReplacesMultipleEntries()
     {
         $file = new LocalFile(static::$dir . 'multiple_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, ['text', 'some'], ['pants', 'many']);
 
@@ -100,7 +100,7 @@ class ReplaceTextTest extends FileTestCase
     public function testReplaceTextReplacesMultipleEntriesWorksInCompound()
     {
         $file = new LocalFile(static::$dir . 'multiple_compound_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, ['text', 'pants that'], ['pants', 'fish like']);
 
@@ -111,7 +111,7 @@ class ReplaceTextTest extends FileTestCase
     public function testCallingReplaceTextWithArraysThatHaveMismatchedCountsThrowsAnException()
     {
         $file = new LocalFile(static::$dir . 'multiple_replace_failure.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         static::setExpectedException(
             'InvalidArgumentException',
@@ -124,7 +124,7 @@ class ReplaceTextTest extends FileTestCase
     public function testCanCallReplaceTextAsAFlow()
     {
         $file = new LocalFile(static::$dir . 'flow_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $file->replaceText('text', 'pants');
 
@@ -135,7 +135,7 @@ class ReplaceTextTest extends FileTestCase
     public function testAddingAPostfixToTheEndOfTheFile()
     {
         $file = new LocalFile(static::$dir . 'postfix_test.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, 'text', 'pants', ['postfix' => 'pfixtest']);
 
@@ -146,7 +146,7 @@ class ReplaceTextTest extends FileTestCase
     public function testCallingWithBlankPostfixWillReplaceInLine()
     {
         $file = new LocalFile(static::$dir . 'inline_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, 'text', 'pants', ['postfix' => '']);
 
@@ -157,7 +157,7 @@ class ReplaceTextTest extends FileTestCase
     public function testSettingKeepOldFileToFalseWillDeleteTheOldFile()
     {
         $file = new LocalFile(static::$dir . 'inline_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, 'text', 'pants', ['keepOldFile' => false]);
 
@@ -168,7 +168,7 @@ class ReplaceTextTest extends FileTestCase
     public function testCallingModifyReplacesText()
     {
         $file = new LocalFile(static::$dir . 'simple_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->modify($file, ['fromText' => 'text', 'toText' => 'pants']);
 
@@ -179,7 +179,7 @@ class ReplaceTextTest extends FileTestCase
     public function testCallingModifyWillPassThroughOptions()
     {
         $file = new LocalFile(static::$dir . 'option_pass_through.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->modify($file,
             [
@@ -204,7 +204,7 @@ class ReplaceTextTest extends FileTestCase
         );
 
         $file = new LocalFile(static::$dir . 'simple_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $this->replacer->modify($file, ['toText' => 'pants']);
     }
@@ -217,7 +217,7 @@ class ReplaceTextTest extends FileTestCase
         );
 
         $file = new LocalFile(static::$dir . 'simple_replace.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $this->replacer->modify($file, ['fromText' => 'pants']);
     }
@@ -226,7 +226,7 @@ class ReplaceTextTest extends FileTestCase
     {
         $file = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
         $file->shouldReceive('__toString')
-            ->andReturn('some/file/here');
+             ->andReturn('some/file/here');
 
         static::setExpectedException(
             "InvalidArgumentException",
@@ -239,7 +239,7 @@ class ReplaceTextTest extends FileTestCase
     public function testCallingReplaceTextOnAFileWithoutAnExtensionWorks()
     {
         $file = new LocalFile(static::$dir . 'file_no_ext');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         $newFile = $this->replacer->replaceText($file, 'text', 'pants');
 
@@ -253,10 +253,10 @@ class ReplaceTextTest extends FileTestCase
         $process = m::mock('Symfony\Component\Process\Process')->makePartial();
         $process->shouldReceive('isSuccessful')->andReturn(false);
         $this->processFactory->shouldReceive('createProcess')
-            ->andReturn($process);
+                             ->andReturn($process);
 
         $file = new LocalFile(static::$dir . 'failed_replace_text.test');
-        file_put_contents($file->getFilePath(), 'some text that text should be replaced');
+        $file->put('some text that text should be replaced');
 
         static::setExpectedException(
             'Symfony\Component\Process\Exception\ProcessFailedException'

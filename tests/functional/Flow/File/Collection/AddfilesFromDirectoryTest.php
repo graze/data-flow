@@ -88,7 +88,7 @@ class AddFilesFromDirectoryTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'single/file.here');
         $file->makeDirectory();
-        file_put_contents($file->getFilePath(), 'some stuff');
+        $file->put('some stuff');
 
         $collection = new FileNodeCollection();
 
@@ -104,7 +104,7 @@ class AddFilesFromDirectoryTest extends FileTestCase
 
         $first = $collection->getAll()[0];
 
-        static::assertEquals(realpath($file->getFilePath()), $first->getFilePath());
+        static::assertEquals($file->getPath(), $first->getPath());
     }
 
     public function testCanAddMultipleFilesInADirectory()
@@ -112,7 +112,7 @@ class AddFilesFromDirectoryTest extends FileTestCase
         $getFile = function ($num) {
             $file = new LocalFile(static::$dir . 'multiple/file.here' . $num);
             $file->makeDirectory();
-            file_put_contents($file->getFilePath(), 'some stuff');
+            $file->put('some stuff');
             return $file;
         };
         $file0 = $getFile(0);
@@ -133,7 +133,7 @@ class AddFilesFromDirectoryTest extends FileTestCase
 
         $first = $collection->getAll()[0];
 
-        static::assertEquals(realpath($file0->getFilePath()), $first->getFilePath());
+        static::assertEquals($file0->getPath(), $first->getPath());
         static::assertEquals(
             array_map(function ($file) {
                 return $file->getFilename();
@@ -148,11 +148,11 @@ class AddFilesFromDirectoryTest extends FileTestCase
     {
         $validFile = new LocalFile(static::$dir . 'recursive/single.level.works');
         $validFile->makeDirectory();
-        file_put_contents($validFile, 'some things');
+        $validFile->put('some things');
 
         $subFolderFile = new LocalFile(static::$dir . 'recursive/multiple/level.doesnt.work');
         $subFolderFile->makeDirectory();
-        file_put_contents($subFolderFile, 'other things');
+        $subFolderFile->put('other things');
 
         $collection = new FileNodeCollection();
         $this->populator->addFilesFromDirectory(
@@ -168,18 +168,18 @@ class AddFilesFromDirectoryTest extends FileTestCase
 
         $first = $collection->getAll()[0];
 
-        static::assertEquals(realpath($validFile->getFilePath()), $first->getFilePath());
+        static::assertEquals($validFile->getPath(), $first->getPath());
     }
 
     public function testAddsAllChildFilesToTheSameCollectionWhenRecursiveIsOn()
     {
         $validFile = new LocalFile(static::$dir . 'recursive2/single.level.works');
         $validFile->makeDirectory();
-        file_put_contents($validFile, 'some things');
+        $validFile->put('some things');
 
         $subFolderFile = new LocalFile(static::$dir . 'recursive2/multiple/level.does.work');
         $subFolderFile->makeDirectory();
-        file_put_contents($subFolderFile, 'other things');
+        $subFolderFile->put('other things');
 
         $collection = new FileNodeCollection();
         $this->populator->addFilesFromDirectory(

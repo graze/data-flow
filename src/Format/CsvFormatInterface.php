@@ -1,8 +1,8 @@
 <?php
 
-namespace Graze\DataFlow\Definition;
+namespace Graze\DataFlow\Format;
 
-interface CsvDefinitionInterface
+interface CsvFormatInterface
 {
     /**
      * @return string
@@ -11,7 +11,7 @@ interface CsvDefinitionInterface
 
     /**
      * @param string $delimiter
-     * @return CsvDefinitionInterface
+     * @return CsvFormatInterface
      */
     public function setDelimiter($delimiter);
 
@@ -27,7 +27,7 @@ interface CsvDefinitionInterface
 
     /**
      * @param string $quoteCharacter
-     * @return CsvDefinitionInterface
+     * @return CsvFormatInterface
      */
     public function setQuoteCharacter($quoteCharacter);
 
@@ -38,7 +38,7 @@ interface CsvDefinitionInterface
 
     /**
      * @param string $nullOutput
-     * @return CsvDefinitionInterface
+     * @return CsvFormatInterface
      */
     public function setNullOutput($nullOutput);
 
@@ -49,7 +49,7 @@ interface CsvDefinitionInterface
 
     /**
      * @param boolean $includeHeaders
-     * @return CsvDefinitionInterface
+     * @return CsvFormatInterface
      */
     public function setIncludeHeaders($includeHeaders);
 
@@ -60,7 +60,7 @@ interface CsvDefinitionInterface
 
     /**
      * @param string $lineTerminator
-     * @return CsvDefinitionInterface
+     * @return CsvFormatInterface
      */
     public function setLineTerminator($lineTerminator);
 }

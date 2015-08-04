@@ -56,29 +56,29 @@ class Zip extends Flow implements ExtensionInterface, CompressorInterface
      */
     public function zip(LocalFile $file, array $options = [])
     {
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
 
         if (!$file->exists()) {
             throw new InvalidArgumentException("The file: $file does not exist");
         }
 
         $outputFile = $file->getClone()
-                           ->setFilePath($pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.zip')
+                           ->setPath($pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.zip')
                            ->setCompression(CompressionType::ZIP);
 
-        $cmd = "zip {$outputFile->getFilePath()} {$file->getFilePath()}";
+        $cmd = "zip {$outputFile->getPath()} {$file->getPath()}";
 
         // @todo Logging
 
         $process = new Process($cmd);
         $process->run();
 
-        if (!$process->isSuccessful() || !file_exists($outputFile->getFilePath()) || exec("wc -c < {$outputFile->getFilePath()}") == 0) {
+        if (!$process->isSuccessful() || !file_exists($outputFile->getPath()) || exec("wc -c < {$outputFile->getPath()}") == 0) {
             throw new ProcessFailedException($process);
         }
 
         if (!$this->getOption($options, 'keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $outputFile;
@@ -121,29 +121,29 @@ class Zip extends Flow implements ExtensionInterface, CompressorInterface
      */
     public function unzip(LocalFile $file, array $options = [])
     {
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
 
         if (!$file->exists()) {
             throw new InvalidArgumentException("The file: $file does not exist");
         }
 
         $outputFile = $file->getClone()
-                           ->setFilePath($pathInfo['dirname'] . '/' . $pathInfo['filename'])
+                           ->setPath($pathInfo['dirname'] . '/' . $pathInfo['filename'])
                            ->setCompression(CompressionType::NONE);
 
-        $cmd = "unzip -p {$file->getFilePath()} > {$outputFile->getFilePath()}";
+        $cmd = "unzip -p {$file->getPath()} > {$outputFile->getPath()}";
 
         // @todo Logging
 
         $process = new Process($cmd);
         $process->run();
 
-        if (!$process->isSuccessful() || !file_exists($outputFile->getFilePath()) || exec("wc -c < {$outputFile->getFilePath()}") == 0) {
+        if (!$process->isSuccessful() || !file_exists($outputFile->getPath()) || exec("wc -c < {$outputFile->getPath()}") == 0) {
             throw new ProcessFailedException($process);
         }
 
         if (!$this->getOption($options, 'keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $outputFile;

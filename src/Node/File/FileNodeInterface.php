@@ -14,7 +14,7 @@ interface FileNodeInterface extends DataNodeInterface
     /**
      * @return string
      */
-    public function getFilePath();
+    public function getPath();
 
     /**
      * @return string
@@ -27,16 +27,6 @@ interface FileNodeInterface extends DataNodeInterface
      * @return array
      */
     public function getContents();
-
-    /**
-     * @return string - see CompressionType::
-     */
-    public function getCompression();
-
-    /**
-     * @return string
-     */
-    public function getEncoding();
 
     /**
      * @return bool

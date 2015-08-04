@@ -10,7 +10,7 @@ use Graze\DataFlow\Node\File\FileNodeCollectionInterface;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactory;
 use Mockery as m;
 
 class MergeFilesTest extends FileTestCase
@@ -28,7 +28,7 @@ class MergeFilesTest extends FileTestCase
     public function setUp()
     {
         MakeDirectory::aware();
-        $this->processFactory = m::mock('Graze\DataFlow\Utility\ProcessFactory')->makePartial();
+        $this->processFactory = m::mock('Graze\DataFlow\Utility\Process\ProcessFactory')->makePartial();
         $this->merge = new MergeFiles($this->processFactory);
     }
 
@@ -137,15 +137,15 @@ class MergeFilesTest extends FileTestCase
         static::assertSame($file, $outputFile);
         static::assertEquals(
             [
-                "File 1 Line 1\n",
-                "File 1 Line 2\n",
-                "File 1 Line 3\n",
-                "File 2 Line 1\n",
-                "File 2 Line 2\n",
-                "File 2 Line 3\n",
-                "File 3 Line 1\n",
-                "File 3 Line 2\n",
-                "File 3 Line 3\n",
+                "File 1 Line 1",
+                "File 1 Line 2",
+                "File 1 Line 3",
+                "File 2 Line 1",
+                "File 2 Line 2",
+                "File 2 Line 3",
+                "File 3 Line 1",
+                "File 3 Line 2",
+                "File 3 Line 3",
             ],
             $file->getContents()
         );
@@ -168,7 +168,7 @@ class MergeFilesTest extends FileTestCase
         for ($i = 1; $i <= $numFiles; $i++) {
             $file = new LocalFile(static::$dir . $rootDir . 'part_' . $i);
             $file->makeDirectory();
-            file_put_contents($file->getFilePath(), "File $i Line 1\nFile $i Line 2\nFile $i Line 3\n");
+            $file->put("File $i Line 1\nFile $i Line 2\nFile $i Line 3\n");
             $collection->add($file);
         }
         return $collection;
@@ -185,15 +185,15 @@ class MergeFilesTest extends FileTestCase
         static::assertSame($file, $outputFile);
         static::assertEquals(
             [
-                "File 1 Line 1\n",
-                "File 1 Line 2\n",
-                "File 1 Line 3\n",
-                "File 2 Line 1\n",
-                "File 2 Line 2\n",
-                "File 2 Line 3\n",
-                "File 3 Line 1\n",
-                "File 3 Line 2\n",
-                "File 3 Line 3\n",
+                "File 1 Line 1",
+                "File 1 Line 2",
+                "File 1 Line 3",
+                "File 2 Line 1",
+                "File 2 Line 2",
+                "File 2 Line 3",
+                "File 3 Line 1",
+                "File 3 Line 2",
+                "File 3 Line 3",
             ],
             $file->getContents()
         );
@@ -235,18 +235,18 @@ class MergeFilesTest extends FileTestCase
             ]
         );
 
-        static::assertSame(static::$dir . 'simple.contract.output', $file->getFilePath());
+        static::assertSame(static::$dir . 'simple.contract.output', $file->getPath());
         static::assertEquals(
             [
-                "File 1 Line 1\n",
-                "File 1 Line 2\n",
-                "File 1 Line 3\n",
-                "File 2 Line 1\n",
-                "File 2 Line 2\n",
-                "File 2 Line 3\n",
-                "File 3 Line 1\n",
-                "File 3 Line 2\n",
-                "File 3 Line 3\n",
+                "File 1 Line 1",
+                "File 1 Line 2",
+                "File 1 Line 3",
+                "File 2 Line 1",
+                "File 2 Line 2",
+                "File 2 Line 3",
+                "File 3 Line 1",
+                "File 3 Line 2",
+                "File 3 Line 3",
             ],
             $file->getContents()
         );
@@ -272,15 +272,15 @@ class MergeFilesTest extends FileTestCase
 
         static::assertEquals(
             [
-                "File 1 Line 1\n",
-                "File 1 Line 2\n",
-                "File 1 Line 3\n",
-                "File 2 Line 1\n",
-                "File 2 Line 2\n",
-                "File 2 Line 3\n",
-                "File 3 Line 1\n",
-                "File 3 Line 2\n",
-                "File 3 Line 3\n",
+                "File 1 Line 1",
+                "File 1 Line 2",
+                "File 1 Line 3",
+                "File 2 Line 1",
+                "File 2 Line 2",
+                "File 2 Line 3",
+                "File 3 Line 1",
+                "File 3 Line 2",
+                "File 3 Line 3",
             ],
             $file->getContents()
         );
@@ -302,5 +302,39 @@ class MergeFilesTest extends FileTestCase
         );
 
         $this->merge->contract($collection);
+    }
+
+    public function testDeleteOldFilesWillDeleteAnyEmptyDirectories()
+    {
+        $collection = $this->createCollection('simple.merge.delete.folder/', 3);
+
+        $outputFile = new LocalFile(static::$dir . 'simple.merge.delete.output');
+
+        $file = $this->merge->merge($collection, $outputFile, ['keepOldFiles' => false]);
+
+        static::assertSame($file, $outputFile);
+        static::assertEquals(
+            [
+                "File 1 Line 1",
+                "File 1 Line 2",
+                "File 1 Line 3",
+                "File 2 Line 1",
+                "File 2 Line 2",
+                "File 2 Line 3",
+                "File 3 Line 1",
+                "File 3 Line 2",
+                "File 3 Line 3",
+            ],
+            $file->getContents()
+        );
+
+        static::assertFalse(file_exists($collection->getAll()[0]->getDirectory()));
+
+        $exists = $collection->filter(function (FileNodeInterface $item) {
+            return $item->exists();
+        });
+
+        static::assertCount(0, $exists);
+        static::assertTrue($file->exists(), 'output file should exist');
     }
 }

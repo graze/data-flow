@@ -4,23 +4,22 @@ namespace Graze\DataFlow\Info\File;
 
 use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 use Graze\DataFlow\Node\File\LocalFile;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactoryInterface;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class FileInfo implements ExtensionInterface
 {
     /**
-     * @var ProcessFactory
+     * @var ProcessFactoryInterface
      */
     protected $processFactory;
 
     /**
-     * @param ProcessFactory $processFactory
+     * @param ProcessFactoryInterface $processFactory
      */
-    public function __construct(ProcessFactory $processFactory)
+    public function __construct(ProcessFactoryInterface $processFactory)
     {
         $this->processFactory = $processFactory;
     }
@@ -47,7 +46,7 @@ class FileInfo implements ExtensionInterface
      */
     public function findEncoding(LocalFile $file)
     {
-        $cmd = "file --brief --uncompress --mime {$file->getFilePath()}";
+        $cmd = "file --brief --uncompress --mime {$file->getPath()}";
 
         $process = $this->processFactory->createProcess($cmd);
         $process->run();
@@ -72,7 +71,7 @@ class FileInfo implements ExtensionInterface
      */
     public function findCompression(LocalFile $file)
     {
-        $cmd = "file --brief --uncompress --mime {$file->getFilePath()}";
+        $cmd = "file --brief --uncompress --mime {$file->getPath()}";
 
         $process = $this->processFactory->createProcess($cmd);
         $process->run();

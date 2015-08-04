@@ -25,9 +25,9 @@ class FileNodeCollection extends DataNodeCollection implements FileNodeCollectio
 
         $commonPath = $this->reduce(function ($commonPath, FileNodeInterface $file) {
             if (is_null($commonPath)) {
-                return $file->getFilePath();
+                return $file->getPath();
             }
-            return $this->getCommonPrefixString($commonPath, $file->getFilePath());
+            return $this->getCommonPrefixString($commonPath, $file->getPath());
         });
 
         return (strlen($commonPath) > 0) ? $commonPath : null;

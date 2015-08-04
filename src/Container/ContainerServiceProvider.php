@@ -12,6 +12,9 @@ class ContainerServiceProvider extends ServiceProvider
      */
     protected $provides = [
         'Graze\Extensible\Finder\ClassBuilder\ClassBuilderInterface',
+        'Graze\Extensible\Finder\Discovery\DiscoveryInterface',
+        'Graze\Extensible\Finder\Reflection\ReflectionHelperInterface',
+        'Graze\DataFlow\Utility\Process\ProcessFactoryInterface',
     ];
 
     /**
@@ -34,6 +37,10 @@ class ContainerServiceProvider extends ServiceProvider
         $this->container->add(
             'Graze\Extensible\Finder\Reflection\ReflectionHelperInterface',
             'Graze\Extensible\Finder\Reflection\ReflectionHelper'
+        );
+        $this->container->add(
+            'Graze\DataFlow\Utility\Process\ProcessFactoryInterface',
+            'Graze\DataFlow\Utility\Process\ProcessFactory'
         );
     }
 }

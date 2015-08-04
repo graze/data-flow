@@ -6,6 +6,7 @@ use Graze\DataFlow\Flow\Flow;
 use Graze\DataFlow\Node\File\FileNodeInterface;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Utility\GetOption;
+use Graze\DataFlow\Utility\Process\ProcessFactoryInterface;
 use Graze\DataFlow\Utility\ProcessFactory;
 use Graze\Extensible\ExtensibleInterface;
 use Graze\Extensible\ExtensionInterface;
@@ -18,9 +19,14 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
     use GetOption;
 
     /**
-     * @param ProcessFactory $processFactory
+     * @var ProcessFactoryInterface
      */
-    public function __construct(ProcessFactory $processFactory)
+    protected $processFactory;
+
+    /**
+     * @param ProcessFactoryInterface $processFactory
+     */
+    public function __construct(ProcessFactoryInterface $processFactory)
     {
         $this->processFactory = $processFactory;
     }
@@ -107,7 +113,7 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
             $postfix = '-' . $postfix;
         }
 
-        $pathInfo = pathinfo($file->getFilePath());
+        $pathInfo = pathinfo($file->getPath());
         $outputFileName = $pathInfo['filename'] . $postfix;
         if (isset($pathInfo['extension'])) {
             $outputFileName .= '.' . $pathInfo['extension'];
@@ -115,7 +121,7 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
         $outputFilePath = $pathInfo['dirname'] . '/' . $outputFileName;
 
         $output = $file->getClone()
-                       ->setFilePath($outputFilePath);
+                       ->setPath($outputFilePath);
 
         $replacementString = null;
 
@@ -139,13 +145,13 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
             $cmd = sprintf(
                 "perl -p -i -e '%s' %s",
                 $replacementString,
-                $file->getFilePath());
+                $file->getPath());
         } else {
             $cmd = sprintf(
                 "perl -p -e '%s' %s > %s",
                 $replacementString,
-                $file->getFilePath(),
-                $output->getFilePath());
+                $file->getPath(),
+                $output->getPath());
         }
 
         $process = $this->processFactory->createProcess($cmd);
@@ -156,7 +162,7 @@ class ReplaceText extends Flow implements ExtensionInterface, FileModifierInterf
         }
 
         if (!$this->getOption('keepOldFile', true)) {
-            unlink($file->getFilePath());
+            $file->delete();
         }
 
         return $output;

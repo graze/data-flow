@@ -26,11 +26,11 @@ class FileNodeCollectionTest extends TestCase
     public function testGetCommonPrefixReturnsCommonPrefixOfFiles()
     {
         $file1 = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
-        $file1->shouldReceive('getFilePath')->andReturn('some/common/path/to/file1.txt');
+        $file1->shouldReceive('getPath')->andReturn('some/common/path/to/file1.txt');
         $file2 = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
-        $file2->shouldReceive('getFilePath')->andReturn('some/common/path/to/file2.txt');
+        $file2->shouldReceive('getPath')->andReturn('some/common/path/to/file2.txt');
         $file3 = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
-        $file3->shouldReceive('getFilePath')->andReturn('some/common/path/to/file3.txt');
+        $file3->shouldReceive('getPath')->andReturn('some/common/path/to/file3.txt');
 
         $this->collection->add($file1);
         $this->collection->add($file2);
@@ -42,11 +42,11 @@ class FileNodeCollectionTest extends TestCase
     public function testGetCommonPrefixReturnsNullIfThereIsNoCommonPrefix()
     {
         $file1 = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
-        $file1->shouldReceive('getFilePath')->andReturn('some/common/path/to/file1.txt');
+        $file1->shouldReceive('getPath')->andReturn('some/common/path/to/file1.txt');
         $file2 = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
-        $file2->shouldReceive('getFilePath')->andReturn('some/common/path/to/file2.txt');
+        $file2->shouldReceive('getPath')->andReturn('some/common/path/to/file2.txt');
         $file3 = m::mock('Graze\DataFlow\Node\File\FileNodeInterface');
-        $file3->shouldReceive('getFilePath')->andReturn('other/nonCommon/path/to/file3.txt');
+        $file3->shouldReceive('getPath')->andReturn('other/nonCommon/path/to/file3.txt');
 
         $this->collection->add($file1);
         $this->collection->add($file2);

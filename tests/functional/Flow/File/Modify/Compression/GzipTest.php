@@ -32,7 +32,7 @@ class GzipTest extends FileTestCase
     public function testCanExtendOnlyAcceptsFilesThatAreUnCompressedForGzip()
     {
         $file = new LocalFile(static::$dir . 'uncompressed_file_gz.test');
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         static::assertTrue($this->gzip->canExtend($file, 'gzip'));
         static::assertFalse($this->gzip->canExtend($file, 'gunzip'));
@@ -40,8 +40,9 @@ class GzipTest extends FileTestCase
 
     public function testCanExtendOnlyAcceptsFilesThatAreCompressedForGunzip()
     {
-        $file = new LocalFile(static::$dir . 'compressed_file_gz.gz', ['compression' => CompressionType::GZIP]);
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file = (new LocalFile(static::$dir . 'compressed_file_gz.gz'))
+            ->setCompression(CompressionType::GZIP);
+        $file->put('random stuff and things!');
 
         static::assertTrue($this->gzip->canExtend($file, 'gunzip'));
         static::assertFalse($this->gzip->canExtend($file, 'gzip'));
@@ -58,17 +59,17 @@ class GzipTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'uncompressed_gz.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         $compressedFile = $this->gzip->gzip($file);
 
         static::assertNotNull($compressedFile);
         static::assertInstanceOf('Graze\DataFlow\Node\File\FileNodeInterface', $compressedFile);
-        static::assertEquals(static::$dir . 'uncompressed_gz.gz', $compressedFile->getFilePath());
+        static::assertEquals(static::$dir . 'uncompressed_gz.gz', $compressedFile->getPath());
         static::assertTrue($compressedFile->exists());
         static::assertEquals(CompressionType::GZIP, $compressedFile->getCompression());
 
-        $cmd = "file {$compressedFile->getFilePath()} | grep " . escapeshellarg('\bgzip\b') . " | wc -l";
+        $cmd = "file {$compressedFile->getPath()} | grep " . escapeshellarg('\bgzip\b') . " | wc -l";
         $result = exec($cmd);
         static::assertEquals(1, $result, "File is not compressed as gzip");
     }
@@ -76,18 +77,18 @@ class GzipTest extends FileTestCase
     public function testFileGetsDecompressedFromGzip()
     {
         $file = new LocalFile(static::$dir . 'get_decompressed_uncompressed_gz.test');
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         $compressedFile = $this->gzip->gzip($file);
         $uncompressedFile = $this->gzip->gunzip($compressedFile);
 
         static::assertNotNull($uncompressedFile);
         static::assertInstanceOf('Graze\DataFlow\Node\File\FileNodeInterface', $uncompressedFile);
-        static::assertEquals(static::$dir . 'get_decompressed_uncompressed_gz', $uncompressedFile->getFilePath());
+        static::assertEquals(static::$dir . 'get_decompressed_uncompressed_gz', $uncompressedFile->getPath());
         static::assertTrue($uncompressedFile->exists());
         static::assertEquals(CompressionType::NONE, $uncompressedFile->getCompression());
 
-        $cmd = "file {$uncompressedFile->getFilePath()} | grep " . escapeshellarg('\bgzip\b') . " | wc -l";
+        $cmd = "file {$uncompressedFile->getPath()} | grep " . escapeshellarg('\bgzip\b') . " | wc -l";
         $result = exec($cmd);
         static::assertEquals(0, $result, "File should not be compressed");
     }
@@ -96,16 +97,16 @@ class GzipTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'uncompressed_gz.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         $compressedFile = $file->gzip();
 
         static::assertNotNull($compressedFile);
         static::assertInstanceOf('Graze\DataFlow\Node\File\FileNodeInterface', $compressedFile);
-        static::assertEquals(static::$dir . 'uncompressed_gz.gz', $compressedFile->getFilePath());
+        static::assertEquals(static::$dir . 'uncompressed_gz.gz', $compressedFile->getPath());
         static::assertTrue($compressedFile->exists());
 
-        $cmd = "file {$compressedFile->getFilePath()} | grep " . escapeshellarg('\bgzip\b') . " | wc -l";
+        $cmd = "file {$compressedFile->getPath()} | grep " . escapeshellarg('\bgzip\b') . " | wc -l";
         $result = exec($cmd);
         static::assertEquals(1, $result, "File is not compressed as gzip");
     }
@@ -114,14 +115,14 @@ class GzipTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'get_decompressed_uncompressed_gz_invoke.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         $compressedFile = $this->gzip->gzip($file);
         $uncompressedFile = $compressedFile->gunzip();
 
         static::assertNotNull($uncompressedFile);
         static::assertInstanceOf('Graze\DataFlow\Node\File\FileNodeInterface', $uncompressedFile);
-        static::assertEquals(static::$dir . 'get_decompressed_uncompressed_gz_invoke', $uncompressedFile->getFilePath());
+        static::assertEquals(static::$dir . 'get_decompressed_uncompressed_gz_invoke', $uncompressedFile->getPath());
         static::assertTrue($uncompressedFile->exists());
         static::assertEquals(CompressionType::NONE, $uncompressedFile->getCompression());
     }
@@ -132,7 +133,7 @@ class GzipTest extends FileTestCase
 
         static::setExpectedException(
             'InvalidArgumentException',
-            'The file: '. $file->getFilePath() . ' does not exist'
+            'The file: '. $file->getPath() . ' does not exist'
         );
 
         $this->gzip->gzip($file);
@@ -144,7 +145,7 @@ class GzipTest extends FileTestCase
 
         static::setExpectedException(
             'InvalidArgumentException',
-            'The file: '. $file->getFilePath() . ' does not exist'
+            'The file: '. $file->getPath() . ' does not exist'
         );
 
         $this->gzip->gunzip($file);
@@ -162,7 +163,7 @@ class GzipTest extends FileTestCase
 
         $file = new LocalFile(static::$dir . 'failed_gzip_process.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things 2!');
+        $file->put('random stuff and things 2!');
 
         static::setExpectedException(
             'Symfony\Component\Process\Exception\ProcessFailedException'
@@ -183,7 +184,7 @@ class GzipTest extends FileTestCase
 
         $file = new LocalFile(static::$dir . 'failed_gunzip_process.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things 2!');
+        $file->put('random stuff and things 2!');
 
         static::setExpectedException(
             'Symfony\Component\Process\Exception\ProcessFailedException'
@@ -196,7 +197,7 @@ class GzipTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'keep_file_gz.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         $compressedFile = $this->gzip->gzip($file, ['keepOldFile' => true]);
 
@@ -213,7 +214,7 @@ class GzipTest extends FileTestCase
     {
         $file = new LocalFile(static::$dir . 'delete_file_gz.test');
 
-        file_put_contents($file->getFilePath(), 'random stuff and things!');
+        $file->put('random stuff and things!');
 
         $compressedFile = $this->gzip->gzip($file, ['keepOldFile' => false]);
 

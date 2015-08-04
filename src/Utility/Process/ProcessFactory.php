@@ -1,11 +1,11 @@
 <?php
 
-namespace Graze\DataFlow\Utility;
+namespace Graze\DataFlow\Utility\Process;
 
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 
-class ProcessFactory
+class ProcessFactory implements ProcessFactoryInterface
 {
     /**
      * @param string         $commandline The command line to run

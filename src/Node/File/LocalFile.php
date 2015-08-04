@@ -3,10 +3,13 @@
 namespace Graze\DataFlow\Node\File;
 
 use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
-use Graze\DataFlow\Node\DataNode;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 
-class LocalFile extends DataNode implements FileNodeInterface
+class LocalFile extends FileNode implements LocalFileNodeInterface
 {
+    const LOCAL_PREFIX = 'local';
+
     /**
      * @var string - CompressionType::
      */
@@ -18,121 +21,14 @@ class LocalFile extends DataNode implements FileNodeInterface
     protected $encoding;
 
     /**
-     * @var string
+     * @param string $path
      */
-    private $directory;
-
-    /**
-     * @var string
-     */
-    private $filename;
-
-    /**
-     * @var mixed
-     */
-    private $contents;
-
-    /**
-     * @param string $filePath
-     * @param array  $options     -compression <string> (Optional) one of CompressionType::
-     *                            -encoding <string> (Optional) An encoding string defined in iconv
-     */
-    public function __construct($filePath, $options = [])
+    public function __construct($path)
     {
-        if (file_exists($filePath)) {
-            $filePath = realpath($filePath);
-        }
+        parent::__construct(new FileSystem(new Local('/')), $path);
 
-        $pathInfo = pathinfo($filePath);
-        $this->filename = $pathInfo['basename'];
-        $this->directory = $pathInfo['dirname'] . '/';
-        $this->compression = (isset($options['compression'])) ? $options['compression'] : CompressionType::NONE;
-        $this->encoding = (isset($options['encoding'])) ? $options['encoding'] : null;
-    }
-
-    /**
-     * @param $filePath
-     * @return LocalFile
-     */
-    public function setFilePath($filePath)
-    {
-        $pathInfo = pathinfo($filePath);
-        $this->directory = $pathInfo['dirname'] . '/';
-        $this->filename = $pathInfo['basename'];
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    /**
-     * @return array
-     */
-    public function getContents()
-    {
-        if (!$this->exists()) {
-            return [];
-        }
-
-        if (!$this->contents) {
-            if ($this->compression != CompressionType::NONE) {
-                $extractedFile = $this->decompress(['keepOldFile' => true]);
-                $this->contents = $extractedFile->getContents();
-                unlink($extractedFile);
-            } else {
-                $this->contents = file($this->getFilePath());
-            }
-        }
-
-        return $this->contents;
-    }
-
-    /**
-     * @return bool
-     */
-    public function exists()
-    {
-        return file_exists($this->getFilePath());
-    }
-
-    /**
-     * @return string
-     */
-    public function getFilePath()
-    {
-        return $this->directory . $this->filename;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getFilePath();
-    }
-
-    /**
-     * @return string - see CompressionType::
-     */
-    public function getCompression()
-    {
-        return $this->compression;
-    }
-
-    /**
-     * @param string $compression
-     * @return LocalFile
-     */
-    public function setCompression($compression)
-    {
-        $this->compression = $compression;
-        return $this;
+        $this->compression = CompressionType::NONE;
+        $this->encoding = null;
     }
 
     /**
@@ -144,30 +40,49 @@ class LocalFile extends DataNode implements FileNodeInterface
     }
 
     /**
-     * @param null|string $encoding
-     * @return LocalFile
+     * @param string $encoding
+     * @return $this
      */
     public function setEncoding($encoding)
     {
         $this->encoding = $encoding;
+
         return $this;
     }
 
     /**
-     * Return a clone of this object
-     *
-     * @return LocalFile
+     * {@inheritdoc}
      */
-    public function getClone()
+    public function getContents()
     {
-        return clone $this;
+        if ($this->exists() &&
+            $this->getCompression() != CompressionType::NONE
+        ) {
+            $uncompressed = $this->decompress();
+            $content = $uncompressed->getContents();
+            $uncompressed->delete();
+            return $content;
+        } else {
+            return parent::getContents();
+        }
     }
 
     /**
-     * @return mixed
+     * @return string - see CompressionType::
      */
-    public function getDirectory()
+    public function getCompression()
     {
-        return $this->directory;
+        return $this->compression;
+    }
+
+    /**
+     * @param string $compression - @see CompressionType::
+     * @return $this
+     */
+    public function setCompression($compression)
+    {
+        $this->compression = $compression;
+
+        return $this;
     }
 }

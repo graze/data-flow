@@ -5,7 +5,7 @@ namespace Graze\DataFlow\Test\Functional\Flow\File\Expand;
 use Graze\DataFlow\Flow\File\Expand\SplitFile;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactory;
 use Mockery as m;
 use Mockery\MockInterface;
 
@@ -23,7 +23,7 @@ class SplitFileTest extends FileTestCase
 
     public function setUp()
     {
-        $this->processFactory = m::mock('Graze\DataFlow\Utility\ProcessFactory')->makePartial();
+        $this->processFactory = m::mock('Graze\DataFlow\Utility\Process\ProcessFactory')->makePartial();
         $this->split = new SplitFile($this->processFactory);
     }
 
@@ -86,8 +86,8 @@ class SplitFileTest extends FileTestCase
         $first = $splitFiles->getAll()[0];
         $second = $splitFiles->getAll()[1];
 
-        static::assertEquals(["Line 1\n", "Line 2\n"], $first->getContents());
-        static::assertEquals(["Line 3\n", "Line 4\n"], $second->getContents());
+        static::assertEquals(["Line 1", "Line 2"], $first->getContents());
+        static::assertEquals(["Line 3", "Line 4"], $second->getContents());
     }
 
     /**
@@ -102,7 +102,7 @@ class SplitFileTest extends FileTestCase
         for ($i = 1; $i <= $lines; $i++) {
             $output .= "Line $i\n";
         }
-        file_put_contents($file, $output);
+        $file->put($output);
         return $file;
     }
 
@@ -116,8 +116,8 @@ class SplitFileTest extends FileTestCase
         $first = $splitFiles->getAll()[0];
         $second = $splitFiles->getAll()[1];
 
-        static::assertEquals(["Line 1\n", "Line 2\n", "Line 3\n"], $first->getContents());
-        static::assertEquals(["Line 4\n", "Line 5\n"], $second->getContents());
+        static::assertEquals(["Line 1", "Line 2", "Line 3"], $first->getContents());
+        static::assertEquals(["Line 4", "Line 5"], $second->getContents());
     }
 
     public function testSplitIntoPartsUsesGNUCommandForGNUSystem()
@@ -259,8 +259,8 @@ usage: split [-a sufflen] [-b byte_count] [-l line_count] [-p pattern]
         $first = $splitFiles->getAll()[0];
         $second = $splitFiles->getAll()[1];
 
-        static::assertEquals(["Line 1\n", "Line 2\n", "Line 3\n"], $first->getContents());
-        static::assertEquals(["Line 4\n", "Line 5\n"], $second->getContents());
+        static::assertEquals(["Line 1", "Line 2", "Line 3"], $first->getContents());
+        static::assertEquals(["Line 4", "Line 5"], $second->getContents());
     }
 
     public function testCallingExpandWithSplitByLinesWillSplitByLines()
@@ -273,8 +273,8 @@ usage: split [-a sufflen] [-b byte_count] [-l line_count] [-p pattern]
         $first = $splitFiles->getAll()[0];
         $second = $splitFiles->getAll()[1];
 
-        static::assertEquals(["Line 1\n", "Line 2\n", "Line 3\n"], $first->getContents());
-        static::assertEquals(["Line 4\n", "Line 5\n"], $second->getContents());
+        static::assertEquals(["Line 1", "Line 2", "Line 3"], $first->getContents());
+        static::assertEquals(["Line 4", "Line 5"], $second->getContents());
     }
 
     public function testCallingExpandWillPassThroughOptions()
@@ -294,11 +294,11 @@ usage: split [-a sufflen] [-b byte_count] [-l line_count] [-p pattern]
         $first = $splitFiles->getAll()[0];
         $second = $splitFiles->getAll()[1];
 
-        static::assertEquals(["Line 1\n", "Line 2\n"], $first->getContents());
-        static::assertEquals(["Line 3\n", "Line 4\n"], $second->getContents());
+        static::assertEquals(["Line 1", "Line 2"], $first->getContents());
+        static::assertEquals(["Line 3", "Line 4"], $second->getContents());
 
         static::assertFalse($file->exists());
-        static::assertEquals(realpath($file->getDirectory() . 'passthrough.4.line-customSplit/') . '/',
+        static::assertEquals($file->getDirectory() . 'passthrough.4.line-customSplit/',
             $first->getDirectory());
     }
 

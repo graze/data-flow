@@ -1,10 +1,10 @@
 <?php
 
-namespace Graze\DataFlow\Definition;
+namespace Graze\DataFlow\Format;
 
 use Graze\DataFlow\Utility\GetOption;
 
-class CsvDefinition implements CsvDefinitionInterface
+class CsvFormat implements CsvFormatInterface, FormatInterface
 {
     use GetOption;
 
@@ -72,7 +72,7 @@ class CsvDefinition implements CsvDefinitionInterface
 
     /**
      * @param string $delimiter
-     * @return CsvDefinition
+     * @return CsvFormat
      */
     public function setDelimiter($delimiter)
     {
@@ -98,7 +98,7 @@ class CsvDefinition implements CsvDefinitionInterface
 
     /**
      * @param string $nullOutput
-     * @return CsvDefinition
+     * @return CsvFormat
      */
     public function setNullOutput($nullOutput)
     {
@@ -116,7 +116,7 @@ class CsvDefinition implements CsvDefinitionInterface
 
     /**
      * @param boolean $includeHeaders
-     * @return CsvDefinition
+     * @return CsvFormat
      */
     public function setIncludeHeaders($includeHeaders)
     {
@@ -134,7 +134,7 @@ class CsvDefinition implements CsvDefinitionInterface
 
     /**
      * @param string $lineTerminator
-     * @return CsvDefinition
+     * @return CsvFormat
      */
     public function setLineTerminator($lineTerminator)
     {
@@ -152,11 +152,21 @@ class CsvDefinition implements CsvDefinitionInterface
 
     /**
      * @param string $quoteCharacter
-     * @return CsvDefinition
+     * @return CsvFormat
      */
     public function setQuoteCharacter($quoteCharacter)
     {
         $this->quoteCharacter = $quoteCharacter;
         return $this;
+    }
+
+    /**
+     * Type type of file format (defined in FileFormatType::)
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return 'csv';
     }
 }

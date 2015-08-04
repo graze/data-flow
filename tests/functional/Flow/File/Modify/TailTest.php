@@ -5,7 +5,7 @@ namespace Graze\DataFlow\Test\Functional\Flow\File\Modify;
 use Graze\DataFlow\Flow\File\Modify\Tail;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
-use Graze\DataFlow\Utility\ProcessFactory;
+use Graze\DataFlow\Utility\Process\ProcessFactory;
 use Mockery as m;
 use Mockery\MockInterface;
 
@@ -23,7 +23,7 @@ class TailTest extends FileTestCase
 
     public function setUp()
     {
-        $this->processFactory = m::mock('Graze\DataFlow\Utility\ProcessFactory')->makePartial();
+        $this->processFactory = m::mock('Graze\DataFlow\Utility\Process\ProcessFactory')->makePartial();
         $this->tail = new Tail($this->processFactory);
     }
 
@@ -83,11 +83,11 @@ class TailTest extends FileTestCase
 
         static::assertEquals(
             [
-                "Line 6\n",
-                "Line 7\n",
-                "Line 8\n",
-                "Line 9\n",
-                "Line 10\n"
+                "Line 6",
+                "Line 7",
+                "Line 8",
+                "Line 9",
+                "Line 10"
             ],
             $newFile->getContents()
         );
@@ -96,8 +96,8 @@ class TailTest extends FileTestCase
 
         static::assertEquals(
             [
-                "Line 9\n",
-                "Line 10\n"
+                "Line 9",
+                "Line 10"
             ],
             $newFile->getContents()
         );
@@ -110,8 +110,7 @@ class TailTest extends FileTestCase
     private function createFile($path)
     {
         $file = new LocalFile(static::$dir . $path);
-        file_put_contents(
-            $file->getFilePath(),
+        $file->put(
             "Line 1
 Line 2
 Line 3
@@ -136,15 +135,15 @@ Line 10
 
         static::assertEquals(
             [
-                "Line 2\n",
-                "Line 3\n",
-                "Line 4\n",
-                "Line 5\n",
-                "Line 6\n",
-                "Line 7\n",
-                "Line 8\n",
-                "Line 9\n",
-                "Line 10\n"
+                "Line 2",
+                "Line 3",
+                "Line 4",
+                "Line 5",
+                "Line 6",
+                "Line 7",
+                "Line 8",
+                "Line 9",
+                "Line 10"
             ],
             $newFile->getContents()
         );
@@ -188,10 +187,10 @@ Line 10
 
         static::assertEquals(
             [
-                "Line 7\n",
-                "Line 8\n",
-                "Line 9\n",
-                "Line 10\n"
+                "Line 7",
+                "Line 8",
+                "Line 9",
+                "Line 10"
             ],
             $newFile->getContents()
         );
@@ -249,7 +248,7 @@ Line 10
             ->andReturn($process);
 
         $file = new LocalFile(static::$dir . 'failed_tail.test');
-        file_put_contents($file->getFilePath(), 'nothing interesting here');
+        $file->put('nothing interesting here');
 
         static::setExpectedException(
             'Symfony\Component\Process\Exception\ProcessFailedException'
