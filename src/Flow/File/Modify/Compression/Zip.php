@@ -73,7 +73,7 @@ class Zip extends Flow implements ExtensionInterface, CompressorInterface
         $process = new Process($cmd);
         $process->run();
 
-        if (!$process->isSuccessful() || !file_exists($outputFile->getPath()) || exec("wc -c < {$outputFile->getPath()}") == 0) {
+        if (!$process->isSuccessful() || !$outputFile->exists() || exec("wc -c < {$outputFile->getPath()}") == 0) {
             throw new ProcessFailedException($process);
         }
 
@@ -138,7 +138,7 @@ class Zip extends Flow implements ExtensionInterface, CompressorInterface
         $process = new Process($cmd);
         $process->run();
 
-        if (!$process->isSuccessful() || !file_exists($outputFile->getPath()) || exec("wc -c < {$outputFile->getPath()}") == 0) {
+        if (!$process->isSuccessful() || !$outputFile->exists() || exec("wc -c < {$outputFile->getPath()}") == 0) {
             throw new ProcessFailedException($process);
         }
 

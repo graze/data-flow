@@ -141,7 +141,7 @@ class TransferTest extends FileTestCase
 
         $fromFile = new FileNode($filesystem, 'some/file');
 
-        $toFile = new LocalFile(static::$dir . 'fail_copy_file.text');
+        $toFile = new LocalFile(static::$dir . 'fail_move_file.text');
 
         $filesystem->shouldReceive('readStream')->with($fromFile->getPath())->andReturn(false);
 
