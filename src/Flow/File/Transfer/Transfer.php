@@ -49,7 +49,7 @@ class Transfer extends Flow implements ExtensionInterface, FileTransferInterface
             'to'   => $to->getFilesystem()
         ]);
 
-        if (!$mountManager->move('from://'.$from->getPath(), 'to://'.$to->getPath())) {
+        if (!$mountManager->move('from://' . $from->getPath(), 'to://' . $to->getPath())) {
             throw new TransferFailedException($from, $to);
         }
 
