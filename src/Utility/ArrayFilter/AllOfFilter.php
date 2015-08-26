@@ -35,8 +35,7 @@ class AllOfFilter implements ArrayFilterInterface
      */
     public function matches($data)
     {
-        foreach ($this->filters as $filter)
-        {
+        foreach ($this->filters as $filter) {
             if (!$filter->matches($data)) {
                 return false;
             }

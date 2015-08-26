@@ -28,9 +28,9 @@ class FileSource implements FileSourceInterface
     private $directory;
 
     /**
-     * @param FilesystemInterface     $filesystem
-     * @param string                  $directory
-     * @param ArrayFilterInterface $filter
+     * @param FilesystemInterface  $filesystem
+     * @param string               $directory
+     * @param ArrayFilterInterface $filter Filter to handle metadata array @see FileSystemInterface::getMetadata
      */
     public function __construct(FilesystemInterface $filesystem, $directory, ArrayFilterInterface $filter)
     {
