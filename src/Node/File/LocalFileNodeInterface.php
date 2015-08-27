@@ -2,7 +2,7 @@
 
 namespace Graze\DataFlow\Node\File;
 
-interface LocalFileNodeInterface
+interface LocalFileNodeInterface extends FileNodeInterface
 {
     /**
      * @return string - see CompressionType::

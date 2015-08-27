@@ -26,7 +26,7 @@
     "require": {
         "php": ">=5.5.0",
         "symfony/process": "^2.7",
-        "graze/extensible": "dev-master",
+        "graze/extensible": "dev-master@dev",
         "graze/data-structure": "^1.0",
         "league/container": "^1.3",
         "league/flysystem": "^1.0"

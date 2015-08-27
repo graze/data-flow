@@ -12,8 +12,6 @@ use League\Flysystem\File;
 
 class FileNode extends File implements FileNodeInterface, ExtensibleInterface, FinderAwareInterface, FormatAwareInterface
 {
-    const PREFIX_REGEX = '#^(.+)\:\/\/(.*)#';
-
     use ContainerExtensible;
     use FormatAwareTrait;
 

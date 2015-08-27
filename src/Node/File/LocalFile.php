@@ -3,13 +3,12 @@
 namespace Graze\DataFlow\Node\File;
 
 use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
+use Graze\DataFlow\Flow\File\Modify\Compression\CompressorFactory;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 
 class LocalFile extends FileNode implements LocalFileNodeInterface
 {
-    const LOCAL_PREFIX = 'local';
-
     /**
      * @var string - CompressionType::
      */
@@ -29,6 +28,8 @@ class LocalFile extends FileNode implements LocalFileNodeInterface
 
         $this->compression = CompressionType::NONE;
         $this->encoding = null;
+
+        CompressorFactory::aware();
     }
 
     /**
