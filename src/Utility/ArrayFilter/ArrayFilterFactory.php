@@ -36,11 +36,19 @@ class ArrayFilterFactory implements ArrayFilterFactoryInterface
     protected $definitions;
 
     /**
-     * Build the definitions
+     * @var ValueFactoryInterface
      */
-    public function __construct()
+    protected $valueFactory;
+
+    /**
+     * Build the definitions
+     *
+     * @param ValueFactoryInterface $valueFactory
+     */
+    public function __construct(ValueFactoryInterface $valueFactory)
     {
-        $this->definitions = [
+        $this->valueFactory = $valueFactory;
+        $this->definitions  = [
             '/^(\w+)(\s*=)?$/i'    => function ($property, $expected) {
                 return new ClosureFilter($property, function ($actual) use ($expected) {
                     return $actual == $expected;
@@ -83,7 +91,7 @@ class ArrayFilterFactory implements ArrayFilterFactoryInterface
                 }
                 );
             },
-            '/^(\w+)\s*in$/i' => function ($property, $expected) {
+            '/^(\w+)\s*in$/i'      => function ($property, $expected) {
                 return new ClosureFilter($property, function ($actual) use ($expected) {
                     return in_array($actual, $expected);
                 }
@@ -94,13 +102,15 @@ class ArrayFilterFactory implements ArrayFilterFactoryInterface
 
     /**
      * @param array $configuration
+     *
      * @return ArrayFilterInterface
      */
     public function createFilters(array $configuration)
     {
         $filters = [];
         foreach ($configuration as $property => $value) {
-            $filters[] = $this->createFilter($property, $value);
+            $expected  = is_string($value) ? $this->valueFactory->parseValue($value) : $value;
+            $filters[] = $this->createFilter($property, $expected);
         }
         return new AllOfFilter($filters);
     }
@@ -108,6 +118,7 @@ class ArrayFilterFactory implements ArrayFilterFactoryInterface
     /**
      * @param string $property
      * @param mixed  $value
+     *
      * @return ArrayFilterInterface
      * @throws UnknownPropertyDefinitionException
      */
@@ -115,7 +126,8 @@ class ArrayFilterFactory implements ArrayFilterFactoryInterface
     {
         foreach ($this->definitions as $key => $definition) {
             if (preg_match($key, $property, $matches)) {
-                return call_user_func($definition, $matches[1], $value);
+                $expected = is_string($value) ? $this->valueFactory->parseValue($value) : $value;
+                return call_user_func($definition, $matches[1], $expected);
             }
         }
 

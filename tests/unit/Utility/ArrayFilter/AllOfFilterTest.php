@@ -1,6 +1,6 @@
 <?php
 
-namespace Graze\DataFlow\Test\Unit\Node\File\MetadataFilter;
+namespace Graze\DataFlow\Test\Unit\Utility\ArrayFilter;
 
 use Graze\DataFlow\Test\TestCase;
 use Graze\DataFlow\Utility\ArrayFilter\AllOfFilter;

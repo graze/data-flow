@@ -1,9 +1,13 @@
 <?php
 
-namespace Graze\DataFlow\Test\Unit\Node\File\MetadataFilter;
+namespace Graze\DataFlow\Test\Unit\Utility\ArrayFilter;
 
 use Graze\DataFlow\Test\TestCase;
 use Graze\DataFlow\Utility\ArrayFilter\ArrayFilterFactory;
+use Graze\DataFlow\Utility\ArrayFilter\ValueFactoryInterface;
+use Mockery as m;
+use Mockery\MockInterface;
+
 
 class ArrayFilterFactoryTest extends TestCase
 {
@@ -12,9 +16,15 @@ class ArrayFilterFactoryTest extends TestCase
      */
     protected $factory;
 
+    /**
+     * @var ValueFactoryInterface|MockInterface
+     */
+    private $valueFactory;
+
     public function setUp()
     {
-        $this->factory = new ArrayFilterFactory();
+        $this->valueFactory = m::mock(ValueFactoryInterface::class);
+        $this->factory      = new ArrayFilterFactory($this->valueFactory);
     }
 
     public function testInstanceOf()
@@ -25,6 +35,7 @@ class ArrayFilterFactoryTest extends TestCase
 
     /**
      * @dataProvider createFilterData
+     *
      * @param string $property
      * @param mixed  $expected
      * @param array  $metadata
@@ -32,6 +43,13 @@ class ArrayFilterFactoryTest extends TestCase
      */
     public function testCreateFilter($property, $expected, $metadata, $result)
     {
+        if (is_string($expected)) {
+            $this->valueFactory->shouldReceive('parseValue')
+                               ->with($expected)
+                               ->once()
+                               ->andReturn($expected);
+        }
+
         $filter = $this->factory->createFilter($property, $expected);
         static::assertEquals($result, $filter->matches($metadata),
             sprintf("Expected %s and %s to %s for property: %s",
@@ -81,6 +99,7 @@ class ArrayFilterFactoryTest extends TestCase
 
     /**
      * @dataProvider invalidPropertyNames
+     *
      * @param string $property
      */
     public function testCreateFilterWillThrowExceptionWithInvalidProperty($property)
@@ -106,18 +125,25 @@ class ArrayFilterFactoryTest extends TestCase
             ['stuff space ='],
             ['things <<'],
             ['stuff >>'],
-            ['']
+            [''],
         ];
     }
 
     /**
      * @dataProvider createFiltersTestData
+     *
      * @param array $configuration
      * @param array $metadata
      * @param bool  $result
      */
     public function testCreateFilters(array $configuration, array $metadata, $result)
     {
+        foreach ($configuration as $property => $value) {
+            $this->valueFactory->shouldReceive('parseValue')
+                               ->with($value)
+                               ->andReturn($value);
+        }
+
         $filter = $this->factory->createFilters($configuration);
         static::assertEquals($result, $filter->matches($metadata),
             sprintf("Expected configuration: %s and data: %s to result in: %s",
