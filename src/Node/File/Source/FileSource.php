@@ -47,7 +47,12 @@ class FileSource implements FileSourceInterface
     {
         $files = $this->filesystem->listContents($this->directory, $recursive);
 
-        $matching = array_filter($files, [$this->filter, 'matches']);
+        // only list files
+        $onlyFiles = array_filter($files, function ($metadata) {
+            return $metadata['type'] == 'file';
+        });
+
+        $matching = array_filter($onlyFiles, [$this->filter, 'matches']);
 
         $fileNodes = array_map(function ($metadata) {
             return new FileNode($this->filesystem, $metadata['path']);
