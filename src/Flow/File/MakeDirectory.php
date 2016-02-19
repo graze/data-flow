@@ -2,43 +2,46 @@
 
 namespace Graze\DataFlow\Flow\File;
 
-use Graze\DataFlow\Flow\File\Exception\MakeDirectoryFailedException;
-use Graze\DataFlow\Flow\Flow;
-use Graze\DataFlow\Node\File\LocalFile;
-use Graze\Extensible\ExtensibleInterface;
-use Graze\Extensible\ExtensionInterface;
+use Graze\DataFile\Modify\Exception\MakeDirectoryFailedException;
+use Graze\DataFile\Node\LocalFile;
+use Graze\DataFlow\Flow\InvokeTrait;
+use Graze\DataFlow\FlowInterface;
+use Graze\DataNode\NodeInterface;
 
-class MakeDirectory extends Flow implements ExtensionInterface
+class MakeDirectory extends \Graze\DataFile\Modify\MakeDirectory implements FlowInterface
 {
+    use InvokeTrait;
+    
     /**
-     * Create the directory specified by the $file if it does not exist
-     *
-     * @extend Graze\DataFlow\Node\File\LocalFile
-     * @param LocalFile $file
-     * @param int       $mode Octal Mode
-     * @return LocalFile The original file inputted
-     * @throws MakeDirectoryFailedException
+     * @var int
      */
-    public function makeDirectory(LocalFile $file, $mode = 0777)
-    {
-        if (!file_exists($file->getDirectory())) {
-            if (!@mkdir($file->getDirectory(), $mode, true)) {
-                $lastError = error_get_last();
-                throw new MakeDirectoryFailedException($file, $lastError['message']);
-            }
-        }
+    private $mode;
 
-        return $file;
+    /**
+     * MakeDirectory constructor.
+     *
+     * @param int $mode
+     */
+    public function __construct($mode = 0777)
+    {
+        $this->mode = $mode;
     }
 
     /**
-     * @param ExtensibleInterface $extensible
-     * @param string              $method
-     * @return bool
+     * Create the directory specified by the $file if it does not exist
+     *
+     * @param NodeInterface $node
+     *
+     * @return LocalFile The original file inputted
+     * @throws MakeDirectoryFailedException
+     *
      */
-    public function canExtend(ExtensibleInterface $extensible, $method)
+    public function flow(NodeInterface $node)
     {
-        return (($extensible instanceof LocalFile) &&
-            ($method == 'makeDirectory'));
+        if (!($node instanceof LocalFile)) {
+            throw new \InvalidArgumentException("Node: $node is not a LocalFile");
+        }
+
+        return $this->makeDirectory($node, $this->mode);
     }
 }

@@ -1,22 +1,61 @@
-.PHONY: test test-coverage test-unit test-unit-coverage test-functional test-functional-coverage install
+SHELL = /bin/sh
 
-test:
-	@./vendor/bin/phpunit
+DOCKER ?= $(shell which docker)
+DOCKER_REPOSITORY := graze/dataFlow
+VOLUME := /opt/graze/dataFlow
+VOLUME_MAP := -v $$(pwd):${VOLUME}
+DOCKER_RUN := ${DOCKER} run --rm -t ${VOLUME_MAP} ${DOCKER_REPOSITORY}:latest
 
-test-coverage:
-	@./vendor/bin/phpunit --coverage-text --coverage-html ./tests/report
+.PHONY: install composer clean help
+.PHONY: test test-unit test-integration test-matrix
 
-test-unit:
-	@./vendor/bin/phpunit --testsuite unit
+.SILENT: help
 
-test-unit-coverage:
-	@./vendor/bin/phpunit --testsuite unit --coverage-text --coverage-html ./tests/report
+install: ## Download the dependencies then build the image :rocket:.
+	make 'composer-install --optimize-autoloader --ignore-platform-reqs'
+	$(DOCKER) build --tag ${DOCKER_REPOSITORY}:latest .
 
-test-functional:
-	@./vendor/bin/phpunit --testsuite functional
+composer-%: ## Run a composer command, `make "composer-<command> [...]"`.
+	${DOCKER} run -t --rm \
+        -v $$(pwd):/usr/src/app \
+        -v ~/.composer:/root/composer \
+        -v ~/.ssh:/root/.ssh:ro \
+        graze/composer --ansi --no-interaction $* $(filter-out $@,$(MAKECMDGOALS))
 
-test-functional-coverage:
-	@./vendor/bin/phpunit --testsuite functional --coverage-text --coverage-html ./tests/report
+test: ## Run the unit and integration testsuites.
+test: lint test-unit test-integration
 
-install:
-	@composer install
+lint: ## Run phpcs against the code.
+	$(DOCKER_RUN) composer lint --ansi
+
+test-unit: ## Run the unit testsuite.
+	$(DOCKER_RUN) composer test:unit --ansi
+
+test-matrix: ## Run the tests against multiple targets
+    ${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} php:5.6-cli \
+    vendor/bin/phpunit --testsuite unit
+    ${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} php:7.0-cli \
+    vendor/bin/phpunit --testsuite unit
+    ${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} diegomarangoni/hhvm:cli \
+    vendor/bin/phpunit --testsuite unit
+
+test-integration: ## Run the integration testsuite
+	$(DOCKER_RUN) vendor/bin/phpunit --testsuite integration
+
+test-coverage: ## Run all tests and output coverage to the console
+	$(DOCKER_RUN) composer test:coverage --ansi
+
+test-coverage-clover: ## Run all tests and output clover coverage to file
+	$(DOCKER_RUN) composer test:coverage-clover --ansi
+
+clean: ## Clean up any images.
+	$(DOCKER) rmi ${DOCKER_REPOSITORY}:latest
+
+run: ## Run a command on the docker image
+	$(DOCKER_RUN) $(filter-out $@,$(MAKECMDGOALS))
+
+help: ## Show this help message.
+	echo "usage: make [target] ..."
+	echo ""
+	echo "targets:"
+	fgrep --no-filename "##" $(MAKEFILE_LIST) | fgrep --invert-match $$'\t' | sed -e 's/: ## / - /'

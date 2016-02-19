@@ -21,60 +21,15 @@ $ composer require graze/data-flow
 
 ## Usage
 
-### Transferring between databases
+- Move and convert data nodes into other formats
+- Soups simple calling `f::each(f::moveFile($targetDir)->gzip()->moveFile($ftpDir))->flow($files)`
+  - transfer files from a remote location, compress using gzip and transfer to another location
+- Concrete API
+- Works with PHP5.6, PHP7 & HHVM
 
-- Creates a local table
-- Exports the table to a file
-- Imports the file into the table
+## Commands
 
-```php
-$redshiftTable
-    ->createTable($localTable)
-    ->export($localFile)
-    ->import($localTable);
-```
-
-### Moving files around
-```php
-$localFile
-    ->compress(CompressionType::GZIP)
-    ->transfer($s3File)
-```
-
-### Transferring files from ftp modifying them and upload to another filesystem
-
-- Grab a bunch of files from a filesystem based on their file metadata (name regex and timestamp created from 2015 onwards)
-- Copy each the file locally
-  - Convert the encoding
-  - Replace NULL with \\N in each file
-  - Move the file to another file system
-
-```php
-$ftpSource = new FileSource(
-    $ftpFileSystem,
-    '/path/to/files/',
-    $filterFactory->createFilters([
-        'name ~' => '/^name_of_file_\d+.csv$/i',
-        'timestamp >' => '2015-01-01'
-    ])
-);
-
-$ftpSource
-    ->getFiles(true) // FileNodeCollectionInterface
-    ->map(function ($file) use ($localDir, $remoteDir) {
-        $file
-            ->copyTo(new File($localDir->getFilesystem(), $localDir->getDirectory() . $file->getFilename()) // FileNodeInterface
-            ->toEncoding('utf8') // FileNodeInterface
-            ->replaceText('NULL','\\N') // FileNodeInterface
-            ->moveTo(new File($remoteDir->getFilesystem(), $remoteDir->getDirectory() . $file->getFilename()); // FileNodeInterface
-    }); //FileNodeCollectionInterface (of each file on remoteFileSystem)
-```
-
-### Custom flows based on other flows
-```php
-$localTable
-    ->copyTo($redshiftTable);
-```
+// list all the commands here that can be done
 
 ## Change log
 
@@ -92,7 +47,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email harry.bragg@graze.com instead of using the issue tracker.
+If you discover any security related issues, please email security@graze.com instead of using the issue tracker.
 
 ## Credits
 

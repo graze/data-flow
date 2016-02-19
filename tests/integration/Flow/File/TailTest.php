@@ -1,0 +1,48 @@
+<?php
+
+namespace Graze\DataFlow\Test\Integration\Flow\File;
+
+use Graze\DataFile\Node\LocalFile;
+use Graze\DataFlow\Flow;
+use Graze\DataFlow\Flow\File\Tail;
+use Graze\DataFlow\Test\RealFileTestCase;
+use Mockery as m;
+
+class TailTest extends RealFileTestCase
+{
+    public function testTail()
+    {
+        $file = $this->makeFile('tail/initial', "line 1\nline 2\nline 3");
+        $flow = new Tail(1);
+
+        $output = $flow->flow($file);
+
+        static::assertNotSame($file, $output);
+        static::assertInstanceOf(LocalFile::class, $output);
+        static::assertEquals(["line 3"], $output->getContents());
+    }
+
+    public function testStaticFlow()
+    {
+        $file = $this->makeFile('tail/static', "line 1\nline 2\nline 3");
+        $flow = Flow::tail(1);
+
+        $output = $flow->flow($file);
+
+        static::assertNotSame($file, $output);
+        static::assertInstanceOf(LocalFile::class, $output);
+        static::assertEquals(["line 3"], $output->getContents());
+    }
+
+    public function testInvokeFlow()
+    {
+        $file = $this->makeFile('tail/invoke', "line 1\nline 2\nline 3");
+        $flow = new Tail(1);
+
+        $output = call_user_func($flow, $file);
+
+        static::assertNotSame($file, $output);
+        static::assertInstanceOf(LocalFile::class, $output);
+        static::assertEquals(["line 3"], $output->getContents());
+    }
+}
