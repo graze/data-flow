@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 
 DOCKER ?= $(shell which docker)
-DOCKER_REPOSITORY := graze/dataFlow
+DOCKER_REPOSITORY := graze/data-flow
 VOLUME := /opt/graze/dataFlow
 VOLUME_MAP := -v $$(pwd):${VOLUME}
 DOCKER_RUN := ${DOCKER} run --rm -t ${VOLUME_MAP} ${DOCKER_REPOSITORY}:latest
@@ -32,11 +32,11 @@ test-unit: ## Run the unit testsuite.
 	$(DOCKER_RUN) composer test:unit --ansi
 
 test-matrix: ## Run the tests against multiple targets
-    ${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} php:5.6-cli \
+	${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} php:5.6-cli \
     vendor/bin/phpunit --testsuite unit
-    ${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} php:7.0-cli \
+	${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} php:7.0-cli \
     vendor/bin/phpunit --testsuite unit
-    ${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} diegomarangoni/hhvm:cli \
+	${DOCKER} run --rm -t ${VOLUME_MAP} -w ${VOLUME} diegomarangoni/hhvm:cli \
     vendor/bin/phpunit --testsuite unit
 
 test-integration: ## Run the integration testsuite
