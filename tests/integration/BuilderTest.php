@@ -72,4 +72,12 @@ class BuilderTest extends TestCase
 
         static::assertEquals($node, $first);
     }
+
+    public function testBuildingAnInstanceWillReturnTheInstance()
+    {
+        $flow = m::mock(FlowInterface::class);
+        $return = $this->builder->buildFlow($flow);
+
+        static::assertSame($flow, $return);
+    }
 }

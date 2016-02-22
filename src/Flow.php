@@ -109,10 +109,6 @@ class Flow extends Run
      */
     public static function __callStatic($flowName, $arguments)
     {
-        if ('run' === $flowName) {
-            return static::buildFlow($flowName, $arguments);
-        }
-
         $flow = new static();
         return $flow->__call($flowName, $arguments);
     }

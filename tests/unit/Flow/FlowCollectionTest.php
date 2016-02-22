@@ -56,6 +56,20 @@ class FlowCollectionTest extends TestCase
         static::assertEquals([$flow1, $flow2, $flow3, $flow4], $collection->getAll());
     }
 
+    public function testContains()
+    {
+        $flow1 = m::mock(FlowInterface::class);
+        $flow2 = m::mock(FlowInterface::class);
+
+        $collection = new FlowCollection($flow1, $flow2);
+
+        static::assertTrue($collection->contains($flow1));
+
+        $flow3 = m::mock(FlowInterface::class);
+
+        static::assertFalse($collection->contains($flow3));
+    }
+
     public function testCount()
     {
         $flow1 = m::mock(FlowInterface::class);

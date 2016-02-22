@@ -2,7 +2,6 @@
 
 namespace Graze\DataFlow\Test\Integration\Flow\File;
 
-use Graze\DataFile\Node\FileNode;
 use Graze\DataFile\Node\FileNodeCollection;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\CopyFiles;
