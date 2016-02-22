@@ -11,20 +11,20 @@ use Graze\DataNode\NodeInterface;
 class MakeDirectory extends \Graze\DataFile\Modify\MakeDirectory implements FlowInterface
 {
     use InvokeTrait;
-    
+
     /**
-     * @var int
+     * @var string|null
      */
-    private $mode;
+    private $visibility;
 
     /**
      * MakeDirectory constructor.
      *
-     * @param int $mode
+     * @param null $visibility
      */
-    public function __construct($mode = 0777)
+    public function __construct($visibility = null)
     {
-        $this->mode = $mode;
+        $this->visibility = $visibility;
     }
 
     /**
@@ -42,6 +42,6 @@ class MakeDirectory extends \Graze\DataFile\Modify\MakeDirectory implements Flow
             throw new \InvalidArgumentException("Node: $node is not a LocalFile");
         }
 
-        return $this->makeDirectory($node, $this->mode);
+        return $this->makeDirectory($node, $this->visibility);
     }
 }

@@ -9,6 +9,7 @@ use Graze\DataFlow\Test\TestCase;
 use Graze\DataNode\NodeCollection;
 use Graze\DataNode\NodeCollectionInterface;
 use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 use Mockery as m;
 
 class EachTest extends TestCase
@@ -20,6 +21,16 @@ class EachTest extends TestCase
         }));
 
         static::assertInstanceOf(FlowInterface::class, $flow);
+    }
+
+    public function testInvalidInputThrowsAnException()
+    {
+        $file = m::mock(NodeInterface::class);
+        $flow = new Each(m::mock(FlowInterface::class));
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
     }
 
     public function testFlow()

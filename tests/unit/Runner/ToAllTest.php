@@ -9,6 +9,7 @@ use Graze\DataFlow\FlowInterface;
 use Graze\DataFlow\Test\TestCase;
 use Graze\DataNode\NodeCollection;
 use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 use Mockery as m;
 
 class ToAllTest extends TestCase

@@ -19,11 +19,11 @@ class FlowTest extends TestCase
         $collection = new NodeCollection([$node1, $node2]);
 
         $result = Flow::create()
-                    ->filter(function (NodeInterface $node) {
-                        return ($node instanceof FileNodeInterface);
-                    })
-                    ->first()
-                    ->flow($collection);
+                      ->filter(function (NodeInterface $node) {
+                          return ($node instanceof FileNodeInterface);
+                      })
+                      ->first()
+                      ->flow($collection);
 
         static::assertSame($result, $node1);
     }

@@ -6,10 +6,22 @@ use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\Tail;
 use Graze\DataFlow\Test\RealFileTestCase;
+use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 use Mockery as m;
 
 class TailTest extends RealFileTestCase
 {
+    public function testTailNotOnLocalFileWillThrowAnException()
+    {
+        $file = m::mock(NodeInterface::class);
+        $flow = new Tail(2);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
+    }
+
     public function testTail()
     {
         $file = $this->makeFile('tail/initial', "line 1\nline 2\nline 3");

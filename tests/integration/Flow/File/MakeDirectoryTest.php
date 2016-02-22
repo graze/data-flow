@@ -2,14 +2,26 @@
 
 namespace Graze\DataFlow\Test\Integration\Flow\File;
 
+use Graze\DataFile\Node\FileNodeInterface;
 use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\MakeDirectory;
 use Graze\DataFlow\Test\RealFileTestCase;
+use InvalidArgumentException;
 use Mockery as m;
 
 class MakeDirectoryTest extends RealFileTestCase
 {
+    public function testMakeDirectoryNotOnLocalFileWillThrowAnException()
+    {
+        $file = m::mock(FileNodeInterface::class);
+        $flow = new MakeDirectory();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
+    }
+
     public function testMakeDirectory()
     {
         $file = $this->makeFile('makeDirectory/initial/file');

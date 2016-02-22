@@ -6,9 +6,22 @@ use Graze\DataFile\Node\FileNode;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\CopyFile;
 use Graze\DataFlow\Test\MemoryFileTestCase;
+use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
+use Mockery as m;
 
-class CopyMemoryFileTest extends MemoryFileTestCase
+class CopyFileTest extends MemoryFileTestCase
 {
+    public function testCopyNotOnLocalFileWillThrowAnException()
+    {
+        $file = m::mock(NodeInterface::class);
+        $flow = new CopyFile(m::mock(FileNode::class));
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
+    }
+
     public function testCopyFileCreatesANewFile()
     {
         $file = $this->makeFile('copy/flow/source', 'some text');

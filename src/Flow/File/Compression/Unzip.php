@@ -13,11 +13,6 @@ class Unzip extends \Graze\DataFile\Modify\Compress\Zip implements FlowInterface
     use InvokeTrait;
 
     /**
-     * @var array
-     */
-    private $options;
-
-    /**
      * Gzip constructor.
      *
      * @param array $options
@@ -40,6 +35,6 @@ class Unzip extends \Graze\DataFile\Modify\Compress\Zip implements FlowInterface
             throw new InvalidArgumentException("Node: $node should be an instance of LocalFile");
         }
 
-        return $this->unzip($node, $this->options);
+        return $this->decompress($node, $this->options);
     }
 }

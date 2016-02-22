@@ -53,10 +53,6 @@ class FlowCollection implements IteratorAggregate, Serializable
      */
     public function add(FlowInterface $flow)
     {
-        if (!($flow instanceof FlowInterface)) {
-            throw new \InvalidArgumentException("Input item does not implement FlowInterface");
-        }
-
         $this->items[] = $flow;
 
         return $this;

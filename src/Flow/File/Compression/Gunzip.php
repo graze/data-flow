@@ -35,6 +35,6 @@ class Gunzip extends \Graze\DataFile\Modify\Compress\Gzip implements FlowInterfa
             throw new InvalidArgumentException("Node: $node should be an instance of LocalFile");
         }
 
-        return $this->gunzip($node, $this->options);
+        return $this->decompress($node, $this->options);
     }
 }

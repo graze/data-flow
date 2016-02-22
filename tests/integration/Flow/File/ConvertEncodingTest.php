@@ -6,10 +6,22 @@ use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\ConvertEncoding;
 use Graze\DataFlow\Test\RealFileTestCase;
+use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 use Mockery as m;
 
 class ConvertEncodingTest extends RealFileTestCase
 {
+    public function testConvertEncodingNotOnLocalFileWillThrowAnException()
+    {
+        $file = m::mock(NodeInterface::class);
+        $flow = new ConvertEncoding('UTF-16');
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
+    }
+
     public function testChangeEncoding()
     {
         $file = $this->makeFile('encoding.utf8', mb_convert_encoding('some#¢±±§', 'UTF-8'));

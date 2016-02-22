@@ -23,8 +23,6 @@ use ReflectionClass;
  * @method static Flow callback(callable $fn = null)
  * @method static Flow makeDirectory($mode = 0777)
  * @method static Flow merge(FileNodeInterface $file, array $options = [])
- * @method static Flow splitIntoParts(FileNodeInterface $directory, $parts)
- * @method static Flow splitByLines(FileNodeInterface $directory, $lines)
  * @method static Flow compress($type, array $options = [])
  * @method static Flow decompress(array $options = [])
  * @method static Flow gzip()
@@ -32,7 +30,9 @@ use ReflectionClass;
  * @method static Flow zip()
  * @method static Flow unzip()
  * @method static Flow copyFile(FileNodeInterface $target);
+ * @method static Flow copyFiles(FileNodeInterface $target);
  * @method static Flow moveFile(FileNodeInterface $target);
+ * @method static Flow moveFiles(FileNodeInterface $target);
  * @method static Flow convertEncoding($newEncoding)
  * @method static Flow replaceText($from, $to)
  * @method static Flow tail($lines)

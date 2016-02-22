@@ -6,10 +6,22 @@ use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\Head;
 use Graze\DataFlow\Test\RealFileTestCase;
+use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 use Mockery as m;
 
 class HeadTest extends RealFileTestCase
 {
+    public function testHeadNotOnLocalFileWillThrowAnException()
+    {
+        $file = m::mock(NodeInterface::class);
+        $flow = new Head(2);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
+    }
+
     public function testHead()
     {
         $file = $this->makeFile('head/initial', "line 1\nline 2\nline 3");

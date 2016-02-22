@@ -4,7 +4,7 @@ namespace Graze\DataFlow\Flow\File\Compression;
 
 use Graze\DataFile\Helper\OptionalLoggerTrait;
 use Graze\DataFile\Modify\Compress\CompressionFactory;
-use Graze\DataFile\Modify\Compress\InvalidCompressionTypeException;
+use Graze\DataFile\Modify\Exception\InvalidCompressionTypeException;
 use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow\InvokeTrait;
 use Graze\DataFlow\FlowInterface;

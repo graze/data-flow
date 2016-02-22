@@ -35,6 +35,6 @@ class Gzip extends \Graze\DataFile\Modify\Compress\Gzip implements FlowInterface
             throw new InvalidArgumentException("Node: $node should be an instance of LocalFile");
         }
 
-        return $this->gzip($node, $this->options);
+        return $this->compress($node, $this->options);
     }
 }

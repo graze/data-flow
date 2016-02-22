@@ -55,4 +55,55 @@ class FlowCollectionTest extends TestCase
 
         static::assertEquals([$flow1, $flow2, $flow3, $flow4], $collection->getAll());
     }
+
+    public function testCount()
+    {
+        $flow1 = m::mock(FlowInterface::class);
+        $flow2 = m::mock(FlowInterface::class);
+
+        $collection = new FlowCollection($flow1, $flow2);
+
+        static::assertEquals(2, $collection->count());
+    }
+
+    public function testRemove()
+    {
+        $flow1 = m::mock(FlowInterface::class);
+        $flow2 = m::mock(FlowInterface::class);
+
+        $collection = new FlowCollection($flow1, $flow2);
+
+        static::assertEquals(2, $collection->count());
+
+        $collection->remove($flow2);
+
+        static::assertEquals(1, $collection->count());
+    }
+
+    public function testIterator()
+    {
+        $flow1 = m::mock(FlowInterface::class);
+        $flow2 = m::mock(FlowInterface::class);
+
+        $collection = new FlowCollection($flow1, $flow2);
+
+        foreach ($collection->getIterator() as $flow) {
+            static::assertContains($flow, [$flow1, $flow2]);
+        }
+    }
+
+    public function testSerialize()
+    {
+        $flow1 = m::mock(FlowInterface::class);
+        $flow2 = m::mock(FlowInterface::class);
+
+        $collection = new FlowCollection($flow1, $flow2);
+
+        $serialized = $collection->serialize();
+
+        $newCollection = new FlowCollection();
+        $newCollection->unserialize($serialized);
+
+        static::assertEquals(2, $newCollection->count());
+    }
 }

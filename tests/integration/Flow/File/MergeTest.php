@@ -3,13 +3,26 @@
 namespace Graze\DataFlow\Test\Integration\Flow\File;
 
 use Graze\DataFile\Node\FileNodeCollection;
+use Graze\DataFile\Node\FileNodeInterface;
 use Graze\DataFlow\Flow;
 use Graze\DataFlow\Flow\File\Merge;
 use Graze\DataFlow\Test\RealFileTestCase;
+use Graze\DataNode\NodeCollectionInterface;
+use InvalidArgumentException;
 use Mockery as m;
 
 class MergeTest extends RealFileTestCase
 {
+    public function testHeadNotOnLocalFileWillThrowAnException()
+    {
+        $file = m::mock(NodeCollectionInterface::class);
+        $flow = new Merge(m::mock(FileNodeInterface::class));
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $flow->flow($file);
+    }
+
     public function testMakeDirectory()
     {
         $file1 = $this->makeFile('merge/initial/file1', "line 1\nline 2\n");

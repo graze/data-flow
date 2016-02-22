@@ -4,6 +4,7 @@ namespace Graze\DataFlow\Flow\File\Compression;
 
 use Graze\DataFile\Helper\OptionalLoggerTrait;
 use Graze\DataFile\Modify\Compress\CompressionFactory;
+use Graze\DataFile\Modify\Exception\InvalidCompressionTypeException;
 use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow\InvokeTrait;
 use Graze\DataFlow\FlowInterface;
@@ -36,7 +37,7 @@ class DeCompress implements FlowInterface, LoggerAwareInterface
      * @param NodeInterface $node
      *
      * @return LocalFile
-     * @throws \Graze\DataFile\Modify\Compress\InvalidCompressionTypeException
+     * @throws InvalidCompressionTypeException
      */
     public function flow(NodeInterface $node)
     {
