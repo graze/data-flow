@@ -24,6 +24,8 @@ $gzip = new Gzip();
 
 ### Builder
 
+With the build and static accessors, the logger will automatically get injected into newly created classes.
+
 ```php
 $builder = new Builder();
 $builder->setLogger($logger);
