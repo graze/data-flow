@@ -29,7 +29,35 @@ $ composer require graze/data-flow
 
 ## Commands
 
-// list all the commands here that can be done
+### Generic
+
+- `Run` - Iterate through a set of Flows
+- `toAll` - Send the same input to each Flow at the same time
+- `first` - Take the first node from a collection
+- `last` - Take the last node from a collection
+- `filter` - Filter out nodes from a collection
+- `map` - Apply a function to each node in a collection
+- `each` - Apply a FlowInterface to each node in a collection
+- `callback` - Apply a callback to the node
+
+### Files
+
+- `makeDirectory` - Make a directory from a file node
+- `merge` - Merge a collection of files into a file
+- `compress` - Compress a file
+- `decompress` - DeCompress a file
+- `gzip` - Gzip a file
+- `gunzip` - Gunzip a file
+- `zip` - Zip a file
+- `unzip` - Unzip a file
+- `copyFile` - Copy a file to a new location
+- `copyFiles` - Cope a collection of files to a new location
+- `moveFile` - Move a file to a new location
+- `moveFiles` - Move a collection of files to a new location
+- `convertEncoding` - Convert the encoding of a file
+- `replaceText` - Replace the text in a file
+- `tail` - Retrieve the last n lines of a file
+- `head` - Retrieve the first n lines of a file
 
 ## Change log
 

@@ -30,7 +30,7 @@ use ReflectionClass;
  * @method static Flow last(callable $fn = null)
  * @method static Flow filter(callable $fn = null)
  * @method static Flow map(callback $fn = null)
- * @method static Flow each(callback $fn = null)
+ * @method static Flow each(FlowInterface $flow)
  * @method static Flow callback(callable $fn = null)
  * @method static Flow makeDirectory($mode = 0777)
  * @method static Flow merge(FileNodeInterface $file, array $options = [])
@@ -48,7 +48,6 @@ use ReflectionClass;
  * @method static Flow replaceText($from, $to)
  * @method static Flow tail($lines)
  * @method static Flow head($lines)
- * @method static Flow transfer(FileNodeInterface $targetFile)
  */
 class Flow extends Run
 {
