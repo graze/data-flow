@@ -24,7 +24,7 @@ $ composer require graze/data-flow
 - Move and convert data nodes into other formats
 - Soups simple calling `f::each(f::moveFile($targetDir)->gzip()->moveFile($ftpDir))->flow($files)`
   - transfer files from a remote location, compress using gzip and transfer to another location
-- [docs/Concrete.md](Concrete API)
+- [Concrete API](docs/Concrete.md)
 - Works with PHP5.6, PHP7 & HHVM
 
 ## Commands
