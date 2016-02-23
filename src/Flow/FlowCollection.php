@@ -9,7 +9,7 @@
  *
  * @license https://github.com/graze/data-flow/blob/master/LICENSE.md
  * @link    https://github.com/graze/data-flow
- */ //partial
+ */
 
 namespace Graze\DataFlow\Flow;
 
@@ -28,7 +28,7 @@ class FlowCollection implements IteratorAggregate, Serializable
     /**
      * FlowCollection constructor.
      *
-     * @param FlowInterface[] $flows
+     * @param FlowInterface[] ...$flows
      */
     public function __construct(...$flows)
     {
