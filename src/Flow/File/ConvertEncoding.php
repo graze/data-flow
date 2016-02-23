@@ -28,7 +28,7 @@ use InvalidArgumentException;
  * iconv -l
  * ```
  */
-class ConvertEncoding extends \Graze\DataFile\Modify\ConvertEncoding implements FlowInterface
+class ConvertEncoding extends \Graze\DataFile\Modify\Encoding\ConvertEncoding implements FlowInterface
 {
     use InvokeTrait;
 
