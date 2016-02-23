@@ -1,4 +1,15 @@
 <?php
+/**
+ * This file is part of graze/data-flow
+ *
+ * Copyright (c) 2016 Nature Delivered Ltd. <https://www.graze.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license https://github.com/graze/data-flow/blob/master/LICENSE.md
+ * @link    https://github.com/graze/data-flow
+ */
 
 namespace Graze\DataFlow;
 
@@ -8,7 +19,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LogLevel;
 use ReflectionClass;
 
-class Builder implements FlowBuilderInterface
+class Builder implements FlowBuilderInterface, LoggerAwareInterface
 {
     use OptionalLoggerTrait;
 
@@ -16,6 +27,7 @@ class Builder implements FlowBuilderInterface
      * @var string[]
      */
     protected $namespaces = [
+        '', // allow Fully qualified class names to be built
         'Graze\\DataFlow\\Flow\\',
         'Graze\\DataFlow\\Flow\\Collection\\',
         'Graze\\DataFlow\\Flow\\File\\',

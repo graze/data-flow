@@ -1,10 +1,20 @@
 <?php
+/**
+ * This file is part of graze/data-flow
+ *
+ * Copyright (c) 2016 Nature Delivered Ltd. <https://www.graze.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license https://github.com/graze/data-flow/blob/master/LICENSE.md
+ * @link    https://github.com/graze/data-flow
+ */
 
 namespace Graze\DataFlow\Test\Unit;
 
 use Graze\DataFile\Node\FileNodeInterface;
 use Graze\DataFlow\Flow;
-use Graze\DataFlow\Flow\Runner\Run;
 use Graze\DataFlow\FlowBuilderInterface;
 use Graze\DataFlow\Test\TestCase;
 use Graze\DataNode\NodeCollection;
@@ -42,7 +52,8 @@ class FlowTest extends TestCase
 
         Flow::setBuilder($builder);
         $builder->shouldReceive('setLogger')
-                ->with($logger);
+                ->with($logger)
+                ->once();
 
         Flow::useLogger($logger);
     }

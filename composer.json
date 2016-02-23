@@ -60,6 +60,9 @@
         "test:coverage": [
             "vendor/bin/phpunit --coverage-text"
         ],
+        "test:coverage-html": [
+            "vendor/bin/phpunit --coverage-html=./tests/report/html"
+        ],
         "test:coverage-clover": [
             "vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover"
         ],
