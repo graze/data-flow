@@ -7,8 +7,7 @@ There are multiple different ways to create a DataFlow:
 This is the shortest way, but requires static access to Flow. Each method represents a Flow class that gets added to the 'Flow'.
 
 ``` php
-$flow = Flow::moveFile($target)->gzip();
-$flow->flow($file);
+$output = Flow::moveFile($target)->gzip()->flow($file);
 ```
 
 ## Concrete Building
@@ -41,10 +40,10 @@ The `Flow`,`Run` and `Each` Constructors each take a variable number of flows.
 
 ```php
 $flow = new Flow(
-    new MoveFile($target)
-    new Gzip()
+    $moveFile,
+    $gzip
 );
-$flow->flow($file);
+$output = $flow->flow($file);
 ```
 
 ### Adding
@@ -53,8 +52,8 @@ This can be accessed fluently or not.
 
 ```php
 $flow = new Flow();
-$flow->add(new MoveFile($target))
-     ->add(new Gzip())
-     ->flow($file);
+$output = $flow->add($moveFile)
+               ->add($gzip)
+               ->flow($file);
 ```
 
