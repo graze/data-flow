@@ -14,6 +14,7 @@
 namespace Graze\DataFlow\Test\Unit\Flow;
 
 use Graze\DataFlow\Flow\FlowCollection;
+use Graze\DataFlow\Flow\Runner\Run;
 use Graze\DataFlow\FlowInterface;
 use Graze\DataFlow\Test\TestCase;
 use IteratorAggregate;
@@ -119,16 +120,15 @@ class FlowCollectionTest extends TestCase
 
     public function testSerialize()
     {
-        $flow1 = m::mock(FlowInterface::class);
-        $flow2 = m::mock(FlowInterface::class);
+        $flow1 = new Run();
 
-        $collection = new FlowCollection($flow1, $flow2);
+        $collection = new FlowCollection($flow1);
 
         $serialized = $collection->serialize();
 
         $newCollection = new FlowCollection();
         $newCollection->unserialize($serialized);
 
-        static::assertEquals(2, $newCollection->count());
+        static::assertEquals(1, $newCollection->count());
     }
 }
