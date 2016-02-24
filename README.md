@@ -26,6 +26,7 @@ $ composer require graze/data-flow
   - transfer files from a remote location, compress using gzip and transfer to another location
 - [Concrete API](docs/Concrete.md)
 - Works with PHP5.6, PHP7 & HHVM
+- **N.B.** Uses some command line programs which conform to Ubunutu's syntax.
 
 ## Commands
 
