@@ -20,27 +20,23 @@
             "role": "Development Team"
         }
     ],
-    "repositories": [
-        { "type": "vcs", "url": "https://github.com/graze/extensible.git" }
-    ],
     "require": {
-        "php": ">=5.5.0",
-        "symfony/process": "^2.7",
-        "graze/extensible": "dev-master@dev",
-        "graze/data-structure": "^1.0",
-        "league/container": "^1.3",
-        "league/flysystem": "^1.0"
+        "php": ">=5.6.0",
+        "league/flysystem": "^1.0",
+        "psr/log": "^1.0",
+        "graze/data-node": "^1.0",
+        "graze/data-file": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit" : "4.*",
+        "phpunit/phpunit": "5.*",
         "mockery/mockery": "~0.9",
-        "league/flysystem-memory": "^1.0"
+        "league/flysystem-memory": "^1.0",
+        "squizlabs/php_codesniffer": "^2.0"
     },
     "autoload": {
         "psr-4": {
             "Graze\\DataFlow\\": "src"
-        },
-        "files": ["src/Container/bootstrap.php"]
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -48,5 +44,33 @@
             "Graze\\DataFlow\\Test\\Unit\\": "tests/unit",
             "Graze\\DataFlow\\Test\\Functional\\": "tests/functional"
         }
+    },
+    "scripts": {
+        "test": [
+            "composer lint --quiet",
+            "composer test:unit --quiet",
+            "composer test:integration --quiet"
+        ],
+        "test:unit": [
+            "vendor/bin/phpunit --colors=always --testsuite unit"
+        ],
+        "test:integration": [
+            "vendor/bin/phpunit --colors=always --testsuite integration"
+        ],
+        "test:coverage": [
+            "vendor/bin/phpunit --coverage-text"
+        ],
+        "test:coverage-html": [
+            "vendor/bin/phpunit --coverage-html=./tests/report/html"
+        ],
+        "test:coverage-clover": [
+            "vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover"
+        ],
+        "lint": [
+            "vendor/bin/phpcs -p --standard=PSR2 --warning-severity=0 src/ tests/"
+        ],
+        "lint:auto-fix": [
+            "vendor/bin/phpcbf -p --standard=PSR2 src/ tests/"
+        ]
     }
 }

@@ -11,48 +11,41 @@
  * @link    https://github.com/graze/data-flow
  */
 
-namespace Graze\DataFlow\Flow\File;
+namespace Graze\DataFlow\Flow\File\Compression;
 
-use Graze\DataFile\Modify\Exception\MakeDirectoryFailedException;
 use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow\InvokeTrait;
 use Graze\DataFlow\FlowInterface;
 use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 
-class MakeDirectory extends \Graze\DataFile\Modify\MakeDirectory implements FlowInterface
+class Gunzip extends \Graze\DataFile\Modify\Compress\Gzip implements FlowInterface
 {
     use InvokeTrait;
 
     /**
-     * @var string|null
-     */
-    private $visibility;
-
-    /**
-     * MakeDirectory constructor.
+     * Gzip constructor.
      *
-     * @param null $visibility
+     * @param array $options
      */
-    public function __construct($visibility = null)
+    public function __construct(array $options = [])
     {
-        $this->visibility = $visibility;
+        $this->options = $options;
     }
 
     /**
-     * Create the directory specified by the $file if it does not exist
+     * Run a 'flow' through the handler
      *
      * @param NodeInterface $node
      *
-     * @return LocalFile The original file inputted
-     * @throws MakeDirectoryFailedException
-     *
+     * @return LocalFile
      */
     public function flow(NodeInterface $node)
     {
         if (!($node instanceof LocalFile)) {
-            throw new \InvalidArgumentException("Node: $node is not a LocalFile");
+            throw new InvalidArgumentException("Node: $node should be an instance of LocalFile");
         }
 
-        return $this->makeDirectory($node, $this->visibility);
+        return $this->decompress($node, $this->options);
     }
 }

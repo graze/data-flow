@@ -21,60 +21,43 @@ $ composer require graze/data-flow
 
 ## Usage
 
-### Transferring between databases
+- Move and convert data nodes into other formats
+- Soups simple calling `f::each(f::moveFile($targetDir)->gzip()->moveFile($ftpDir))->flow($files)`
+  - transfer files from a remote location, compress using gzip and transfer to another location
+- [Concrete API](docs/Concrete.md)
+- Works with PHP5.6, PHP7 & HHVM
 
-- Creates a local table
-- Exports the table to a file
-- Imports the file into the table
+## Commands
 
-```php
-$redshiftTable
-    ->createTable($localTable)
-    ->export($localFile)
-    ->import($localTable);
-```
+### Generic
 
-### Moving files around
-```php
-$localFile
-    ->compress(CompressionType::GZIP)
-    ->transfer($s3File)
-```
+- `Run` - Iterate through a set of Flows
+- `toAll` - Send the same input to each Flow at the same time
+- `first` - Take the first node from a collection
+- `last` - Take the last node from a collection
+- `filter` - Filter out nodes from a collection
+- `map` - Apply a function to each node in a collection
+- `each` - Apply a FlowInterface to each node in a collection
+- `callback` - Apply a callback to the node
 
-### Transferring files from ftp modifying them and upload to another filesystem
+### Files
 
-- Grab a bunch of files from a filesystem based on their file metadata (name regex and timestamp created from 2015 onwards)
-- Copy each the file locally
-  - Convert the encoding
-  - Replace NULL with \\N in each file
-  - Move the file to another file system
-
-```php
-$ftpSource = new FileSource(
-    $ftpFileSystem,
-    '/path/to/files/',
-    $filterFactory->createFilters([
-        'name ~' => '/^name_of_file_\d+.csv$/i',
-        'timestamp >' => '2015-01-01'
-    ])
-);
-
-$ftpSource
-    ->getFiles(true) // FileNodeCollectionInterface
-    ->map(function ($file) use ($localDir, $remoteDir) {
-        $file
-            ->copyTo(new File($localDir->getFilesystem(), $localDir->getDirectory() . $file->getFilename()) // FileNodeInterface
-            ->toEncoding('utf8') // FileNodeInterface
-            ->replaceText('NULL','\\N') // FileNodeInterface
-            ->moveTo(new File($remoteDir->getFilesystem(), $remoteDir->getDirectory() . $file->getFilename()); // FileNodeInterface
-    }); //FileNodeCollectionInterface (of each file on remoteFileSystem)
-```
-
-### Custom flows based on other flows
-```php
-$localTable
-    ->copyTo($redshiftTable);
-```
+- `makeDirectory` - Make a directory from a file node
+- `merge` - Merge a collection of files into a file
+- `compress` - Compress a file
+- `decompress` - DeCompress a file
+- `gzip` - Gzip a file
+- `gunzip` - Gunzip a file
+- `zip` - Zip a file
+- `unzip` - Unzip a file
+- `copyFile` - Copy a file to a new location
+- `copyFiles` - Cope a collection of files to a new location
+- `moveFile` - Move a file to a new location
+- `moveFiles` - Move a collection of files to a new location
+- `convertEncoding` - Convert the encoding of a file
+- `replaceText` - Replace the text in a file
+- `tail` - Retrieve the last n lines of a file
+- `head` - Retrieve the first n lines of a file
 
 ## Change log
 
@@ -92,7 +75,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email harry.bragg@graze.com instead of using the issue tracker.
+If you discover any security related issues, please email security@graze.com instead of using the issue tracker.
 
 ## Credits
 

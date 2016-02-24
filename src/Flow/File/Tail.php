@@ -13,46 +13,41 @@
 
 namespace Graze\DataFlow\Flow\File;
 
-use Graze\DataFile\Modify\Exception\MakeDirectoryFailedException;
 use Graze\DataFile\Node\LocalFile;
 use Graze\DataFlow\Flow\InvokeTrait;
 use Graze\DataFlow\FlowInterface;
 use Graze\DataNode\NodeInterface;
+use InvalidArgumentException;
 
-class MakeDirectory extends \Graze\DataFile\Modify\MakeDirectory implements FlowInterface
+class Tail extends \Graze\DataFile\Modify\Tail implements FlowInterface
 {
     use InvokeTrait;
 
     /**
-     * @var string|null
+     * @param string $lines   Number of lines to head (accepts +/- modifiers)
+     * @param array  $options List of options:
+     *                        -postfix <string> (Default: tail)
+     *                        -keepOldFile <bool> (Default: true)
      */
-    private $visibility;
-
-    /**
-     * MakeDirectory constructor.
-     *
-     * @param null $visibility
-     */
-    public function __construct($visibility = null)
+    public function __construct($lines, array $options = [])
     {
-        $this->visibility = $visibility;
+        $this->lines = $lines;
+        $this->options = $options;
     }
 
     /**
-     * Create the directory specified by the $file if it does not exist
+     * Run a 'flow' through the handler
      *
      * @param NodeInterface $node
      *
-     * @return LocalFile The original file inputted
-     * @throws MakeDirectoryFailedException
-     *
+     * @return LocalFile
      */
     public function flow(NodeInterface $node)
     {
         if (!($node instanceof LocalFile)) {
-            throw new \InvalidArgumentException("Node: $node is not a LocalFile");
+            throw new InvalidArgumentException("Node: $node should be an instance of LocalFile");
         }
 
-        return $this->makeDirectory($node, $this->visibility);
+        return $this->tail($node, $this->lines, $this->options);
     }
 }
