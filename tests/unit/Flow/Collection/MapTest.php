@@ -26,7 +26,7 @@ class MapTest extends TestCase
 {
     public function testInstanceOf()
     {
-        $flow = new Map(function ($node) {
+        $flow = new Map(function () {
             return true;
         });
 
@@ -46,7 +46,7 @@ class MapTest extends TestCase
 
     public function testFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };
@@ -65,7 +65,7 @@ class MapTest extends TestCase
 
     public function testStaticFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };
@@ -84,7 +84,7 @@ class MapTest extends TestCase
 
     public function testInvokeFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };

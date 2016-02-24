@@ -24,7 +24,7 @@ class CallbackTest extends TestCase
 {
     public function testInstanceOf()
     {
-        static::assertInstanceOf(FlowInterface::class, new Callback(function ($file) {
+        static::assertInstanceOf(FlowInterface::class, new Callback(function () {
         }));
     }
 

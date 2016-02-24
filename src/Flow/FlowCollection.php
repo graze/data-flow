@@ -28,7 +28,7 @@ class FlowCollection implements IteratorAggregate, Serializable
     /**
      * FlowCollection constructor.
      *
-     * @param FlowInterface[] ...$flows
+     * @param FlowInterface ...$flows
      */
     public function __construct(...$flows)
     {
@@ -77,7 +77,7 @@ class FlowCollection implements IteratorAggregate, Serializable
     public function remove(FlowInterface $flow)
     {
         $index = array_search($flow, $this->items, true);
-        if ($index) {
+        if ($index !== false) {
             unset($this->items[$index]);
             $this->items = array_values($this->items);
         }

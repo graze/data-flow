@@ -26,13 +26,13 @@ abstract class RealFileTestCase extends TestCase
 
     public static function setUpBeforeClass()
     {
-        static::$dir = static::getTestDir();
+        static::$dir = self::getTestDir();
     }
 
     public static function tearDownAfterClass()
     {
         if (is_dir(static::$dir)) {
-            static::rmDirRecursive(static::$dir);
+            self::rmDirRecursive(static::$dir);
         }
     }
 
@@ -62,7 +62,7 @@ abstract class RealFileTestCase extends TestCase
     {
         $files = array_diff(scandir($path), array('.', '..'));
         foreach ($files as $file) {
-            (is_dir("$path/$file")) ? static::rmDirRecursive("$path/$file") : unlink("$path/$file");
+            (is_dir("$path/$file")) ? self::rmDirRecursive("$path/$file") : unlink("$path/$file");
         }
         return rmdir($path);
     }
@@ -76,7 +76,7 @@ abstract class RealFileTestCase extends TestCase
     protected function makeFile($path, $contents = null)
     {
         $file = new LocalFile(static::$dir . $path);
-        if ($contents) {
+        if (!is_null($contents)) {
             $file->write($contents);
         }
         return $file;
