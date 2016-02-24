@@ -20,6 +20,7 @@ use Graze\DataFlow\Test\TestCase;
 use Graze\DataNode\NodeCollection;
 use Graze\DataNode\NodeInterface;
 use Mockery as m;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -28,6 +29,12 @@ use Psr\Log\LoggerInterface;
  */
 class FlowTest extends TestCase
 {
+    public function tearDown()
+    {
+        parent::tearDown();
+        m::close();
+    }
+
     public function testFluentChain()
     {
         $node1 = m::mock(FileNodeInterface::class);
@@ -47,7 +54,7 @@ class FlowTest extends TestCase
 
     public function testSetLoggerSetsTheLoggerOnTheBuilder()
     {
-        $builder = m::mock(FlowBuilderInterface::class);
+        $builder = m::mock(FlowBuilderInterface::class, LoggerAwareInterface::class);
         $logger = m::mock(LoggerInterface::class);
 
         Flow::setBuilder($builder);
@@ -64,7 +71,8 @@ class FlowTest extends TestCase
         Flow::setBuilder($builder);
 
         $builder->shouldReceive('addNamespace')
-                ->with('Graze\\DataFlow\\');
+                ->with('Graze\\DataFlow\\')
+                ->once();
 
         Flow::with('Graze\\DataFlow\\');
     }

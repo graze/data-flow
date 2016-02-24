@@ -54,7 +54,7 @@ test-matrix: ## Run the unit tests against multiple targets.
     vendor/bin/phpunit --testsuite unit
 
 test-integration: ## Run the integration testsuite.
-	$(DOCKER_RUN) vendor/bin/phpunit --testsuite integration
+	$(DOCKER_RUN) composer test:integration --ansi
 
 test-coverage: ## Run all tests and output coverage to the console.
 	$(DOCKER_RUN) composer test:coverage --ansi
