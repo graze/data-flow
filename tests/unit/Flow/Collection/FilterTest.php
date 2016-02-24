@@ -26,7 +26,7 @@ class FilterTest extends TestCase
 {
     public function testInstanceOf()
     {
-        $flow = new Filter(function ($node) {
+        $flow = new Filter(function () {
             return true;
         });
 
@@ -46,7 +46,7 @@ class FilterTest extends TestCase
 
     public function testFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };
@@ -64,7 +64,7 @@ class FilterTest extends TestCase
 
     public function testStaticFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };
@@ -82,7 +82,7 @@ class FilterTest extends TestCase
 
     public function callInvokeFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };

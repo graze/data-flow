@@ -26,7 +26,7 @@ class LastTest extends TestCase
 {
     public function testInstanceOf()
     {
-        $flow = new Last(function ($node) {
+        $flow = new Last(function () {
             return true;
         });
 
@@ -46,7 +46,7 @@ class LastTest extends TestCase
 
     public function testFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };
@@ -64,7 +64,7 @@ class LastTest extends TestCase
 
     public function testStaticFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };
@@ -82,7 +82,7 @@ class LastTest extends TestCase
 
     public function testInvokeFlow()
     {
-        $func = function ($node) use (&$called) {
+        $func = function () use (&$called) {
             $called = true;
             return true;
         };

@@ -38,7 +38,7 @@ abstract class MemoryFileTestCase extends TestCase
     protected function makeFile($path, $contents = null)
     {
         $file = new FileNode($this->filesystem, $path);
-        if ($contents) {
+        if (!is_null($contents)) {
             $file->write($contents);
         }
         return $file;
