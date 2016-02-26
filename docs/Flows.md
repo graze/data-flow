@@ -1,6 +1,6 @@
 # Flows
 
-A Flow is a series of steps that modify some data.
+A `Flow` is a defined series of individual steps each of which modify some data that gets passed to the next step in the flow.
 
 ## Creating Flows
 
@@ -45,7 +45,7 @@ $output = Flow::moveFile($target)->gzip()->flow($file);
 
 ### Constructor
 
-The `Flow`,`Run` and `Each` Constructors each take a variable number of flows.
+The `Flow`,`Run` and `ToAll` Constructors each take a variable number of flows.
 
 ```php
 $flow = new Flow(
