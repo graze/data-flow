@@ -11,28 +11,21 @@
 
 To move data from one system to another. Such as sending a table between different database providers, exporting a table and uploading to an ftp site.
 
-## Install
+## About
 
-Via Composer
+Move and convert data nodes into other formats
 
-```bash
-$ composer require graze/data-flow
-```
-
-## Usage
-
-- Move and convert data nodes into other formats
 - Soups simple calling `f::each(f::moveFile($targetDir)->gzip()->moveFile($ftpDir))->flow($files)`
   - transfer files from a remote location, compress using gzip and transfer to another location
-- [Concrete API](docs/Concrete.md)
-- Works with PHP5.6, PHP7 & HHVM
+- [How to flow](docs/Flows.md)
+- Works with PHP 5.6, PHP 7 & HHVM
 - **N.B.** Uses some command line programs which conform to Ubunutu's syntax.
 
 ## Commands
 
 ### Generic
 
-- `Run` - Iterate through a set of Flows
+- `run` - Iterate through a set of Flows
 - `toAll` - Send the same input to each Flow at the same time
 - `first` - Take the first node from a collection
 - `last` - Take the last node from a collection
@@ -60,11 +53,17 @@ $ composer require graze/data-flow
 - `tail` - Retrieve the last n lines of a file
 - `head` - Retrieve the first n lines of a file
 
-## Change log
+## Installation
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Via Composer
+
+```bash
+$ composer require graze/data-flow
+```
 
 ## Testing
+
+`DataFlow` has a `PHPUnit` test suite built on top of Docker :whale:. To run the tests run the following command:
 
 ``` bash
 $ make test
@@ -73,6 +72,10 @@ $ make test
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Change log
+
+Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
 ## Security
 

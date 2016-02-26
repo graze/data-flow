@@ -91,4 +91,10 @@ class BuilderTest extends TestCase
 
         static::assertSame($flow, $return);
     }
+
+    public function testBuildingACompleteClassNameWillBuildTheclass()
+    {
+        $flow = $this->builder->buildFlow(Flow::class);
+        static::assertInstanceOf(Flow::class, $flow);
+    }
 }

@@ -1,29 +1,30 @@
-# Concrete API access to DataFlow
+# Flows
 
-There are multiple different ways to create a DataFlow:
+A Flow is a series of steps that modify some data.
 
-## Static Building
+## Creating Flows
 
-This is the shortest way, but requires static access to Flow. Each method represents a Flow class that gets added to the 'Flow'.
+### Building the flow steps
 
-``` php
-$output = Flow::moveFile($target)->gzip()->flow($file);
+Each step of a flow can be build individually.
+
+#### Static calls
+
+```php
+$moveFile = Flow::moveFile($target);
+$gzip = Flow::gzip();
 ```
 
-## Concrete Building
-
-Each of the classes can however be built manually.
-
-### Manually
+#### Manually
 
 ```php
 $moveFile = new MoveFile($target);
 $gzip = new Gzip();
 ```
 
-### Builder
+#### Builder
 
-With the build and static accessors, the logger will automatically get injected into newly created classes.
+With the build and static accessors, an optional logger will automatically get injected into newly created classes.
 
 ```php
 $builder = new Builder();
@@ -33,6 +34,14 @@ $gzip = $builder->buildFlow(Gzip::class);
 ```
 
 ## Creating Flows
+
+### Simple Static Binding
+
+This is the shortest way, but requires static access to Flow. Each method represents a Flow class that gets added to the 'Flow'.
+
+``` php
+$output = Flow::moveFile($target)->gzip()->flow($file);
+```
 
 ### Constructor
 
@@ -56,4 +65,3 @@ $output = $flow->add($moveFile)
                ->add($gzip)
                ->flow($file);
 ```
-
