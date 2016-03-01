@@ -9,13 +9,11 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/graze/data-flow.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/data-flow)
 [![Total Downloads](https://img.shields.io/packagist/dt/graze/data-flow.svg?style=flat-square)](https://packagist.org/packages/graze/data-flow)
 
-To move data from one system to another. Such as sending a table between different database providers, exporting a table and uploading to an ftp site.
+A `Flow` is a defined series of individual steps each of which modify some data that gets passed to the next step in the flow.
 
-## About
+## Details
 
-Move and convert data nodes into other formats
-
-- Soups simple calling `f::each(f::moveFile($targetDir)->gzip()->moveFile($ftpDir))->flow($files)`
+- Soups simple calling `f::moveFiles($targetDir)->each(f::gzip())->moveFiles($ftpDir)->flow($files)`
   - transfer files from a remote location, compress using gzip and transfer to another location
 - [How to flow](docs/Flows.md)
 - Works with PHP 5.6, PHP 7 & HHVM
@@ -63,7 +61,7 @@ $ composer require graze/data-flow
 
 ## Testing
 
-`DataFlow` has a `PHPUnit` test suite built on top of Docker :whale:. To run the tests run the following command:
+`DataFlow` has a `PHPUnit` test suite run through Docker :whale:. To run the tests run the following command:
 
 ``` bash
 $ make test
