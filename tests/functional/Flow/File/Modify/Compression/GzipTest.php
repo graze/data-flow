@@ -160,6 +160,7 @@ class GzipTest extends FileTestCase
         $process->shouldReceive('getExitCode')->andReturn(1);
         $process->shouldReceive('getExitCodeText')->andReturn('bla');
         $process->shouldReceive('isOutputDisabled')->andReturn(true);
+        $process->shouldReceive('getWorkingDirectory');
 
         $file = new LocalFile(static::$dir . 'failed_gzip_process.test');
 
@@ -181,6 +182,7 @@ class GzipTest extends FileTestCase
         $process->shouldReceive('getExitCode')->andReturn(1);
         $process->shouldReceive('getExitCodeText')->andReturn('bla');
         $process->shouldReceive('isOutputDisabled')->andReturn(true);
+        $process->shouldReceive('getWorkingDirectory');
 
         $file = new LocalFile(static::$dir . 'failed_gunzip_process.test');
 
