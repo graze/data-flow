@@ -162,7 +162,6 @@ class ZipTest extends FileTestCase
         $process->shouldReceive('getExitCode')->andReturn(1);
         $process->shouldReceive('getExitCodeText')->andReturn('bla');
         $process->shouldReceive('isOutputDisabled')->andReturn(true);
-        $process->shouldReceive('getWorkingDirectory');
 
         $file = new LocalFile(static::$dir . 'failed_zip_process.test');
 
@@ -184,7 +183,6 @@ class ZipTest extends FileTestCase
         $process->shouldReceive('getExitCode')->andReturn(1);
         $process->shouldReceive('getExitCodeText')->andReturn('bla');
         $process->shouldReceive('isOutputDisabled')->andReturn(true);
-        $process->shouldReceive('getWorkingDirectory');
 
         $file = new LocalFile(static::$dir . 'failed_unzip_process.test');
 

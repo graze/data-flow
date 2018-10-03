@@ -7,16 +7,7 @@
     ],
     "homepage": "https://github.com/graze/data-flow",
     "license": "MIT",
-    "config": {
-        "platform": {
-            "ext-simplexml": "1.0",
-            "ext-dom": "1.0",
-            "ext-tokenizer": "1.0",
-            "ext-xmlwriter": "1.0",
-            "ext-fileinfo": "1.0",
-            "php": "5.5"
-        }
-    },    "authors": [
+    "authors": [
         {
             "name": "Harry Bragg",
             "email": "harry.bragg@graze.com",
