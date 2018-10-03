@@ -4,10 +4,8 @@ namespace Graze\DataFlow\Test\Fuctional\Flow\File\Modify;
 
 use Graze\DataFlow\Flow\File\Modify\Compression\CompressionType;
 use Graze\DataFlow\Flow\File\Modify\Compression\Gzip;
-use Graze\DataFlow\Flow\File\Modify\Copy;
 use Graze\DataFlow\Node\File\LocalFile;
 use Graze\DataFlow\Test\File\FileTestCase;
-use Mockery as m;
 
 class CopyTest extends FileTestCase
 {
@@ -54,20 +52,5 @@ class CopyTest extends FileTestCase
         $newFile = $localFile->copy();
 
         static::assertEquals($localFile->getPath() . '-copy', $newFile);
-    }
-
-    public function testWhenCopyFailsItRaisesAnException()
-    {
-        $localFile = new LocalFile(static::$dir . 'copy_failed.text');
-        $localFile->put('some ascii text');
-
-        $newPath = '/not/a/real/path/' . $localFile->getFilename();
-
-        static::setExpectedException(
-            'Graze\DataFlow\Flow\File\Modify\Exception\CopyFailedException',
-            "Failed to copy file from: '$localFile' to '$newPath'. copy(/not/a/real/path/copy_failed.text): failed to open stream: No such file or directory"
-        );
-
-        $localFile->copy($newPath);
     }
 }
